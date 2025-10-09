@@ -1,0 +1,78 @@
+server:
+  port: 8095
+
+spring:
+  application:
+    name: ai-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/foodapp_ai
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/foodapp_ai
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: ai-service-group
+
+ai:
+  model:
+    path: ${AI_MODEL_PATH}
+    update-interval: 86400 # 24 hours
+  prediction:
+    batch-size: 100
+    confidence-threshold: 0.75
+  optimization:
+    enabled: true
+    interval: 3600 # 1 hour
+  features:
+    demand-forecasting: true
+    price-optimization: true
+    route-optimization: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+  circuitbreaker:
+    enabled: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      modelPrediction:
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+  bulkhead:
+    instances:
+      batchPrediction:
+        maxConcurrentCalls: 10
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.foodapp.ai: DEBUG

@@ -1,0 +1,74 @@
+server:
+  port: 8091
+
+spring:
+  application:
+    name: quality-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/foodapp_quality
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: quality-service-group
+
+quality:
+  checks:
+    interval: 3600 # 1 hour in seconds
+  alerts:
+    email: ${QUALITY_ALERT_EMAIL}
+    enabled: true
+  standards:
+    temperature:
+      min: 4
+      max: 60
+    humidity:
+      max: 65
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+  circuitbreaker:
+    enabled: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      restaurantService:
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+  retry:
+    instances:
+      qualityCheck:
+        maxRetryAttempts: 3
+        waitDuration: 1s
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.foodapp.quality: DEBUG

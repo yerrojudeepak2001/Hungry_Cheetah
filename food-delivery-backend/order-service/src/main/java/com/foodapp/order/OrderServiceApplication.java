@@ -7,6 +7,7 @@ import org.springframework.jms.annotation.EnableJms;
 
 @SpringBootApplication
 @EnableDiscoveryClient
+@EnableFeignClients
 @EnableJms
 public class OrderServiceApplication {
     public static void main(String[] args) {
