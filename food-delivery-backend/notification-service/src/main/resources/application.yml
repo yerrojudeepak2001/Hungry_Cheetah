@@ -1,0 +1,97 @@
+server:
+  port: 8106
+
+spring:
+  application:
+    name: notification-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/foodapp_notifications
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: notification-service-group
+  redis:
+    host: localhost
+    port: 6379
+    password: ${REDIS_PASSWORD}
+
+notification:
+  providers:
+    email:
+      enabled: true
+      smtp:
+        host: ${SMTP_HOST}
+        port: ${SMTP_PORT}
+        username: ${SMTP_USERNAME}
+        password: ${SMTP_PASSWORD}
+    sms:
+      enabled: true
+      twilio:
+        account-sid: ${TWILIO_ACCOUNT_SID}
+        auth-token: ${TWILIO_AUTH_TOKEN}
+        phone-number: ${TWILIO_PHONE_NUMBER}
+    push:
+      enabled: true
+      firebase:
+        config-path: ${FIREBASE_CONFIG_PATH}
+  templates:
+    cache-ttl: 3600 # 1 hour
+  rate-limit:
+    per-user: 10 # per minute
+    global: 1000 # per minute
+  retry:
+    max-attempts: 3
+    initial-interval: 1000 # milliseconds
+    multiplier: 2.0
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+  circuitbreaker:
+    enabled: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      emailProvider:
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+      smsProvider:
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+  ratelimiter:
+    instances:
+      notifications:
+        limitForPeriod: 1000
+        limitRefreshPeriod: 1m
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.foodapp.notification: DEBUG

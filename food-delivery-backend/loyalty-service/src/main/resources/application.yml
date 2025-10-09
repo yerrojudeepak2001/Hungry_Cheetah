@@ -1,0 +1,90 @@
+server:
+  port: 8101
+
+spring:
+  application:
+    name: loyalty-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/foodapp_loyalty
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: loyalty-service-group
+  redis:
+    host: localhost
+    port: 6379
+    password: ${REDIS_PASSWORD}
+
+loyalty:
+  points:
+    expiry-months: 12
+    minimum-redemption: 100
+    earn-rate: 1 # points per dollar
+  tiers:
+    - name: BRONZE
+      minimum-points: 0
+      benefits:
+        - type: CASHBACK
+          value: 1
+    - name: SILVER
+      minimum-points: 1000
+      benefits:
+        - type: CASHBACK
+          value: 2
+    - name: GOLD
+      minimum-points: 5000
+      benefits:
+        - type: CASHBACK
+          value: 5
+  special-events:
+    birthday-multiplier: 2
+    holiday-multiplier: 1.5
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+  circuitbreaker:
+    enabled: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      pointsCalculation:
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+  retry:
+    instances:
+      pointsUpdate:
+        maxRetryAttempts: 3
+        waitDuration: 1s
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.foodapp.loyalty: DEBUG
