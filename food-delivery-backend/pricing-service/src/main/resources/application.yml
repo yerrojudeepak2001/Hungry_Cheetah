@@ -1,0 +1,80 @@
+server:
+  port: 8102
+
+spring:
+  application:
+    name: pricing-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/foodapp_pricing
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: pricing-service-group
+  redis:
+    host: localhost
+    port: 6379
+    password: ${REDIS_PASSWORD}
+
+pricing:
+  dynamic:
+    enabled: true
+    update-interval: 300 # 5 minutes
+    max-surge: 2.0 # maximum price multiplier
+  cache:
+    ttl: 300 # 5 minutes
+  factors:
+    demand-weight: 0.4
+    time-weight: 0.3
+    weather-weight: 0.2
+    event-weight: 0.1
+  minimum:
+    delivery-fee: 2.99
+    order-amount: 10.00
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+  circuitbreaker:
+    enabled: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      pricingCalculation:
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+  bulkhead:
+    instances:
+      dynamicPricing:
+        maxConcurrentCalls: 20
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.foodapp.pricing: DEBUG

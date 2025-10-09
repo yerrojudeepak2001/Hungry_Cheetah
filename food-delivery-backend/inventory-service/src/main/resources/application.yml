@@ -1,0 +1,74 @@
+server:
+  port: 8092
+
+spring:
+  application:
+    name: inventory-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/foodapp_inventory
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: inventory-service-group
+  redis:
+    host: localhost
+    port: 6379
+    password: ${REDIS_PASSWORD}
+
+inventory:
+  alert:
+    low-stock-threshold: 20 # percentage
+    critical-stock-threshold: 10 # percentage
+  sync:
+    interval: 900 # 15 minutes in seconds
+  forecast:
+    enabled: true
+    days-ahead: 7
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+  circuitbreaker:
+    enabled: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      restaurantService:
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+  bulkhead:
+    instances:
+      stockUpdate:
+        maxConcurrentCalls: 20
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.foodapp.inventory: DEBUG

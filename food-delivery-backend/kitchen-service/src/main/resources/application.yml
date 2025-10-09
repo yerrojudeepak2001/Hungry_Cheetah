@@ -1,0 +1,72 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: kitchen-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/foodapp_kitchen
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: kitchen-service-group
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+kitchen:
+  order:
+    preparation-timeout: 1800 # 30 minutes in seconds
+  capacity:
+    max-concurrent-orders: 50
+  alerts:
+    enabled: true
+    threshold: 80 # percentage of capacity
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+  circuitbreaker:
+    enabled: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      restaurantService:
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+  bulkhead:
+    instances:
+      orderProcessing:
+        maxConcurrentCalls: 50
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.foodapp.kitchen: DEBUG
