@@ -1,0 +1,77 @@
+server:
+  port: 8100
+
+spring:
+  application:
+    name: tracking-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/foodapp_tracking
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: tracking-service-group
+  redis:
+    host: localhost
+    port: 6379
+    password: ${REDIS_PASSWORD}
+
+tracking:
+  location:
+    update-interval: 10 # seconds
+    precision: 6 # decimal places for coordinates
+  websocket:
+    enabled: true
+    endpoint: /ws/tracking
+  history:
+    retention-days: 30
+  geofencing:
+    enabled: true
+    radius: 100 # meters
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+  circuitbreaker:
+    enabled: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      locationUpdate:
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+  bulkhead:
+    instances:
+      tracking:
+        maxConcurrentCalls: 1000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.foodapp.tracking: DEBUG
