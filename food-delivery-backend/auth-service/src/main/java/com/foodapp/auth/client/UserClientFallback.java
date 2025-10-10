@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserClientFallback implements UserClient {
-<<<<<<< HEAD
     @Override
     public UserDetails getUserDetails(String userId) {
         return null;
@@ -25,7 +24,6 @@ public class UserClientFallback implements UserClient {
     @Override
     public void updateLastLogin(String userId) {
         // Do nothing in fallback
-=======
     
     @Override
     public UserDetails getUserDetails(String userId) {
@@ -54,6 +52,5 @@ public class UserClientFallback implements UserClient {
     @Override
     public void updateLastLogin(String userId) {
         // Fallback - do nothing
->>>>>>> version1.4
     }
 }

@@ -1,13 +1,10 @@
 package com.foodapp.common.constants;
 
 public class AppConstants {
-<<<<<<< HEAD
-=======
     // JWT Constants
     public static final String HEADER_STRING = "Authorization";
     public static final String TOKEN_PREFIX = "Bearer ";
     
->>>>>>> version1.4
     // Queue Constants
     public static final String ORDER_CREATED_QUEUE = "order.created.queue";
     public static final String PAYMENT_SUCCESS_QUEUE = "payment.success.queue";

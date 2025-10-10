@@ -1,20 +1,16 @@
 package com.foodapp.user.service;
 
 import com.foodapp.user.model.Address;
-<<<<<<< HEAD
 import com.foodapp.user.model.User;
 import com.foodapp.user.repository.AddressRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-=======
 import org.springframework.stereotype.Service;
 
->>>>>>> version1.4
 import java.util.List;
 
 @Service
 public class AddressService {
-<<<<<<< HEAD
     private final AddressRepository addressRepository;
 
     public AddressService(AddressRepository addressRepository) {
@@ -67,7 +63,6 @@ public class AddressService {
         Address address = addressRepository.findById(addressId)
             .orElseThrow(() -> new RuntimeException("Address not found: " + addressId));
         addressRepository.delete(address);
-=======
     
     public List<Address> getUserAddresses(Long userId) {
         // TODO: Implement address retrieval
@@ -100,6 +95,5 @@ public class AddressService {
     public Address updateAddress(Long userId, Long addressId, Address address) {
         // TODO: Implement update address
         return address;
->>>>>>> version1.4
     }
 }

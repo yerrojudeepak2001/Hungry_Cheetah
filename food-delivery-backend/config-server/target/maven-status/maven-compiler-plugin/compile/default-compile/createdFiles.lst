@@ -1,3 +1,5 @@
 com\foodapp\config\client\ConfigRefreshClient.class
+com\foodapp\config\dto\ServiceConfig.class
+com\foodapp\config\client\ConfigRefreshClientFallback.class
 com\foodapp\config\ConfigServerApplication.class
 com\foodapp\config\configuration\ConfigServerConfiguration.class

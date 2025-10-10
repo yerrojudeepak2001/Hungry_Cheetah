@@ -1,12 +1,10 @@
 package com.foodapp.user.service;
 
-<<<<<<< HEAD
 public interface SmsService {
     void sendVerificationSms(String to, String verificationCode);
     void sendOrderStatusSms(String to, String orderStatus);
     void sendDeliveryUpdateSms(String to, String updateMessage);
     void sendSecurityAlertSms(String to, String alertMessage);
-=======
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,5 +19,4 @@ public class SmsService {
         // TODO: Implement order update SMS
         System.out.println("Sending order update SMS to: " + phoneNumber);
     }
->>>>>>> version1.4
 }

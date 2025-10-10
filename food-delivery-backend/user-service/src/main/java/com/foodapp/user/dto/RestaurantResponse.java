@@ -1,20 +1,16 @@
 package com.foodapp.user.dto;
 
-<<<<<<< HEAD
 public class RestaurantResponse {
     private Long id;
-=======
 import lombok.Data;
 
 @Data
 public class RestaurantResponse {
     private String restaurantId;
->>>>>>> version1.4
     private String name;
     private String cuisine;
     private Double rating;
     private String address;
-<<<<<<< HEAD
     private Boolean isOpen;
 
     // Getters and Setters
@@ -65,6 +61,4 @@ public class RestaurantResponse {
     public void setIsOpen(Boolean isOpen) {
         this.isOpen = isOpen;
     }
-=======
->>>>>>> version1.4
 }

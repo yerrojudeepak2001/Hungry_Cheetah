@@ -1,10 +1,8 @@
 package com.foodapp.user.model;
 
-<<<<<<< HEAD
 import jakarta.persistence.*;
 
 @Entity
-=======
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -14,13 +12,11 @@ import jakarta.persistence.*;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
->>>>>>> version1.4
 @Table(name = "addresses")
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-<<<<<<< HEAD
 
     @Column(nullable = false)
     private String streetAddress;
@@ -171,7 +167,6 @@ public class Address {
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
-=======
     
     private String street;
     private String city;
@@ -186,5 +181,4 @@ public class Address {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
->>>>>>> version1.4
 }

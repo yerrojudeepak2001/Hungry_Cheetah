@@ -1,22 +1,18 @@
 package com.foodapp.auth.model;
 
 import jakarta.persistence.*;
-<<<<<<< HEAD
 import java.util.Set;
 
-=======
 import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
->>>>>>> version1.4
 @Entity
 @Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-<<<<<<< HEAD
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -151,7 +147,6 @@ public class User {
 
     public void setRoles(Set<String> roles) {
         this.roles = roles;
-=======
     
     @Column(unique = true, nullable = false)
     private String username;
@@ -187,6 +182,5 @@ public class User {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
->>>>>>> version1.4
     }
 }

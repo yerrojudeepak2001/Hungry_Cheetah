@@ -5,11 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import com.foodapp.auth.dto.FraudCheckRequest;
 import com.foodapp.auth.dto.FraudCheckResponse;
 import com.foodapp.auth.dto.SuspiciousActivityReport;
-<<<<<<< HEAD
-=======
 
 import java.util.List;
->>>>>>> version1.4
 
 @FeignClient(name = "FRAUD-DETECTION-SERVICE", fallback = FraudCheckClientFallback.class)
 public interface FraudDetectionClient {

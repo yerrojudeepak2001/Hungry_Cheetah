@@ -1,6 +1,5 @@
 package com.foodapp.user.dto;
 
-<<<<<<< HEAD
 public class UserOrderStats {
     private Integer totalOrders;
     private Double totalSpent;
@@ -57,7 +56,6 @@ public class UserOrderStats {
     public void setFavoriteCategory(String favoriteCategory) {
         this.favoriteCategory = favoriteCategory;
     }
-=======
 import lombok.Data;
 
 @Data
@@ -67,5 +65,4 @@ public class UserOrderStats {
     private Double totalSpent;
     private String favoriteRestaurant;
     private String favoriteCategory;
->>>>>>> version1.4
 }

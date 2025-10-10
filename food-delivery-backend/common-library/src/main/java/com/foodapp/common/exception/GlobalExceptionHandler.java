@@ -15,26 +15,22 @@ import java.util.HashMap;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-<<<<<<< HEAD
     public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException ex) {
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
                 "Resource Not Found",
                 ex.getMessage(),
                 System.currentTimeMillis()
-=======
     public ResponseEntity<Map<String, Object>> handleResourceNotFound(ResourceNotFoundException ex) {
         Map<String, Object> error = new HashMap<>();
         error.put("status", HttpStatus.NOT_FOUND.value());
         error.put("error", "Resource Not Found");
         error.put("message", ex.getMessage());
         error.put("timestamp", System.currentTimeMillis()
->>>>>>> version1.4
         );
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
-<<<<<<< HEAD
     @ExceptionHandler(CallNotPermittedException.class)
     public ResponseEntity<ErrorResponse> handleCircuitBreakerError(CallNotPermittedException ex) {
         ErrorResponse error = new ErrorResponse(
@@ -98,7 +94,6 @@ public class GlobalExceptionHandler {
                 ex.getMessage(),
                 System.currentTimeMillis()
         );
-=======
     @ExceptionHandler(ResourceAccessException.class)
     public ResponseEntity<Map<String, Object>> handleResourceAccessError(ResourceAccessException ex) {
         Map<String, Object> error = new HashMap<>();
@@ -116,12 +111,10 @@ public class GlobalExceptionHandler {
         error.put("error", "Security Error");
         error.put("message", ex.getMessage());
         error.put("timestamp", System.currentTimeMillis());
->>>>>>> version1.4
         return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(Exception.class)
-<<<<<<< HEAD
     public ResponseEntity<ErrorResponse> handleGenericError(Exception ex) {
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
@@ -129,14 +122,12 @@ public class GlobalExceptionHandler {
                 "An unexpected error occurred. Please try again later.",
                 System.currentTimeMillis()
         );
-=======
     public ResponseEntity<Map<String, Object>> handleGenericError(Exception ex) {
         Map<String, Object> error = new HashMap<>();
         error.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
         error.put("error", "Internal Server Error");
         error.put("message", "An unexpected error occurred. Please try again later.");
         error.put("timestamp", System.currentTimeMillis());
->>>>>>> version1.4
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

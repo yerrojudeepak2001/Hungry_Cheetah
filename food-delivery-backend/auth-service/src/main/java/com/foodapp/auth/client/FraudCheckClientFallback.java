@@ -5,7 +5,6 @@ import com.foodapp.auth.dto.FraudCheckResponse;
 import com.foodapp.auth.dto.SuspiciousActivityReport;
 import org.springframework.stereotype.Component;
 
-<<<<<<< HEAD
 @Component
 public class FraudCheckClientFallback implements FraudDetectionClient {
     @Override
@@ -32,7 +31,6 @@ public class FraudCheckClientFallback implements FraudDetectionClient {
     @Override
     public double getUserRiskScore(String userId) {
         return 0.0; // Default low risk score in fallback
-=======
 import java.util.List;
 
 @Component
@@ -55,6 +53,5 @@ public class FraudCheckClientFallback implements FraudDetectionClient {
     @Override
     public List<SuspiciousActivityReport> getSuspiciousActivities(String userId) {
         return List.of();
->>>>>>> version1.4
     }
 }

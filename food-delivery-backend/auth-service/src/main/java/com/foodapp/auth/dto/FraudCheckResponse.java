@@ -1,6 +1,5 @@
 package com.foodapp.auth.dto;
 
-<<<<<<< HEAD
 public class FraudCheckResponse {
     private boolean fraudulent;
     private String reason;
@@ -30,7 +29,6 @@ public class FraudCheckResponse {
     public void setRiskScore(int riskScore) {
         this.riskScore = riskScore;
     }
-=======
 import lombok.Data;
 
 @Data
@@ -38,5 +36,4 @@ public class FraudCheckResponse {
     private boolean isFraudulent;
     private String riskLevel;
     private String message;
->>>>>>> version1.4
 }

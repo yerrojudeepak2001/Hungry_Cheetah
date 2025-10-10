@@ -2,10 +2,7 @@ package com.foodapp.gateway.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
-<<<<<<< HEAD
 import com.foodapp.gateway.dto.ServiceHealth;
-=======
->>>>>>> version1.4
 import java.util.Map;
 
 @FeignClient(name = "SERVICE-HEALTH")

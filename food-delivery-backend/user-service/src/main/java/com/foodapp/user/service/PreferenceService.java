@@ -1,6 +1,5 @@
 package com.foodapp.user.service;
 
-<<<<<<< HEAD
 import com.foodapp.user.model.UserPreference;
 import com.foodapp.user.model.User;
 import com.foodapp.user.repository.UserPreferenceRepository;
@@ -46,7 +45,6 @@ public class PreferenceService {
         UserPreference preference = preferenceRepository.findByUserId(userId)
             .orElseThrow(() -> new RuntimeException("Preferences not found for user: " + userId));
         preferenceRepository.delete(preference);
-=======
 import com.foodapp.user.model.Preference;
 import com.foodapp.user.model.User;
 import org.springframework.stereotype.Service;
@@ -88,6 +86,5 @@ public class PreferenceService {
     public List<String> getDietaryRestrictions(Long userId) {
         // TODO: Implement get dietary restrictions
         return List.of();
->>>>>>> version1.4
     }
 }

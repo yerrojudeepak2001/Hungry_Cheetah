@@ -1,6 +1,5 @@
 package com.foodapp.user.dto;
 
-<<<<<<< HEAD
 public class OrderResponse {
     private Long id;
     private String status;
@@ -48,7 +47,6 @@ public class OrderResponse {
     public void setOrderDate(String orderDate) {
         this.orderDate = orderDate;
     }
-=======
 import lombok.Data;
 
 @Data
@@ -58,5 +56,4 @@ public class OrderResponse {
     private String restaurantName;
     private Double totalAmount;
     private String orderDate;
->>>>>>> version1.4
 }

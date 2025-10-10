@@ -1,11 +1,9 @@
 package com.foodapp.user.model;
 
-<<<<<<< HEAD
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "user_preferences")
-=======
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -16,13 +14,11 @@ import jakarta.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "preferences")
->>>>>>> version1.4
 public class Preference {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-<<<<<<< HEAD
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -86,7 +82,6 @@ public class Preference {
     public void setActive(Boolean active) {
         this.active = active;
     }
-=======
     private String name;
     private String value;
     private String category; // DIETARY, NOTIFICATION, PRIVACY, etc.
@@ -94,5 +89,4 @@ public class Preference {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
->>>>>>> version1.4
 }

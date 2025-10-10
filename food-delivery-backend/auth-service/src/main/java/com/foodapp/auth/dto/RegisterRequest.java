@@ -1,6 +1,5 @@
 package com.foodapp.auth.dto;
 
-<<<<<<< HEAD
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -85,7 +84,6 @@ public class RegisterRequest {
     public void setRoles(Set<String> roles) {
         this.roles = roles;
     }
-=======
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -103,5 +101,4 @@ public class RegisterRequest {
     private String firstName;
     private String lastName;
     private String phoneNumber;
->>>>>>> version1.4
 }

@@ -1,7 +1,5 @@
 package com.foodapp.registry.client;
 
-import com.foodapp.registry.dto.ServiceHealth;
-import com.foodapp.registry.dto.ServiceStatusUpdate;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -10,8 +8,8 @@ import java.util.Map;
 @Component
 public class HealthCheckClientFallback implements HealthCheckClient {
     @Override
-    public ServiceHealth checkServiceHealth() {
-        return new ServiceHealth("DOWN", Collections.emptyMap());
+    public Map<String, Object> checkServiceHealth() {
+        return Collections.singletonMap("status", "DOWN");
     }
 
     @Override
@@ -20,7 +18,7 @@ public class HealthCheckClientFallback implements HealthCheckClient {
     }
 
     @Override
-    public void updateServiceStatus(ServiceStatusUpdate status) {
+    public void updateServiceStatus(Map<String, Object> status) {
         // Do nothing in fallback
     }
 }

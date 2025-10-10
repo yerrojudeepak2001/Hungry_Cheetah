@@ -1,9 +1,6 @@
 package com.foodapp.auth.dto;
 
-<<<<<<< HEAD
-=======
 import lombok.Data;
->>>>>>> version1.4
 import jakarta.validation.constraints.NotBlank;
 
 public class LoginRequest {

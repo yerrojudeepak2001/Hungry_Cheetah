@@ -4,11 +4,8 @@ import com.foodapp.auth.model.User;
 import com.foodapp.auth.repository.UserRepository;
 import com.foodapp.auth.dto.RegisterRequest;
 import com.foodapp.auth.dto.LoginRequest;
-<<<<<<< HEAD
 import java.util.Set;
-=======
 import com.foodapp.common.security.JwtTokenProvider;
->>>>>>> version1.4
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +37,6 @@ public class AuthService {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setPhoneNumber(request.getPhoneNumber());
-<<<<<<< HEAD
         
         Set<String> roles = request.getRoles();
         if (roles == null || roles.isEmpty()) {
@@ -50,12 +46,10 @@ public class AuthService {
 
         userRepository.save(user);
         return jwtService.generateToken(user.getUsername());
-=======
         user.setRole("USER");
 
         userRepository.save(user);
         return jwtTokenProvider.generateToken(user.getUsername());
->>>>>>> version1.4
     }
 
     public String login(LoginRequest request) {
@@ -66,11 +60,8 @@ public class AuthService {
             throw new RuntimeException("Invalid credentials");
         }
 
-<<<<<<< HEAD
         return jwtService.generateToken(user.getUsername());
-=======
         return jwtTokenProvider.generateToken(user.getUsername());
->>>>>>> version1.4
     }
 
     public String refreshToken(String refreshToken) {

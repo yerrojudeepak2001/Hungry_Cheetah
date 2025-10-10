@@ -1,11 +1,8 @@
 package com.foodapp.auth.dto;
 
-<<<<<<< HEAD
-=======
 import lombok.Data;
 
 @Data
->>>>>>> version1.4
 public class UserRegistrationRequest {
     private String username;
     private String email;
@@ -13,7 +10,6 @@ public class UserRegistrationRequest {
     private String firstName;
     private String lastName;
     private String phoneNumber;
-<<<<<<< HEAD
 
     // Getters and setters
     public String getUsername() {
@@ -63,7 +59,5 @@ public class UserRegistrationRequest {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
-=======
     private String role;
->>>>>>> version1.4
 }

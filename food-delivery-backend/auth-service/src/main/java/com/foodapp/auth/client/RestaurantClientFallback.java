@@ -4,15 +4,11 @@ import com.foodapp.auth.dto.RolePermissions;
 import com.foodapp.auth.dto.StaffValidationRequest;
 import org.springframework.stereotype.Component;
 
-<<<<<<< HEAD
 import java.util.Collections;
-=======
->>>>>>> version1.4
 import java.util.List;
 
 @Component
 public class RestaurantClientFallback implements RestaurantClient {
-<<<<<<< HEAD
     @Override
     public RolePermissions getStaffPermissions(String restaurantId, String userId) {
         return null;
@@ -26,7 +22,6 @@ public class RestaurantClientFallback implements RestaurantClient {
     @Override
     public List<String> getOwnedRestaurants(String userId) {
         return Collections.emptyList();
-=======
     
     @Override
     public RolePermissions getRolePermissions(String restaurantId, String role) {
@@ -44,6 +39,5 @@ public class RestaurantClientFallback implements RestaurantClient {
     @Override
     public List<String> getRestaurantsByOwner(String ownerId) {
         return List.of();
->>>>>>> version1.4
     }
 }
