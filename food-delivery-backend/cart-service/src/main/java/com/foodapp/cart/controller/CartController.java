@@ -1,7 +1,12 @@
 package com.foodapp.cart.controller;
 
 import com.foodapp.common.dto.ApiResponse;
-import com.foodapp.cart.model.*;
+import com.foodapp.cart.entity.Cart;
+import com.foodapp.cart.entity.CartItem;
+import com.foodapp.cart.service.CartService;
+import com.foodapp.cart.service.CartValidationService;
+import com.foodapp.cart.dto.CartItemUpdate;
+import com.foodapp.cart.dto.MultiRestaurantCartItem;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +41,7 @@ public class CartController {
             @PathVariable Long userId,
             @PathVariable Long itemId,
             @RequestBody CartItemUpdate update) {
-        var updated = cartService.updateCartItem(userId, itemId, update);
+        var updated = cartService.updateCartItem(String.valueOf(userId), itemId, update);
         return ResponseEntity.ok(new ApiResponse<>(true, "Cart item updated successfully", updated));
     }
 
@@ -51,7 +56,7 @@ public class CartController {
     // Cart Validation
     @PostMapping("/{userId}/validate")
     public ResponseEntity<ApiResponse<?>> validateCart(@PathVariable Long userId) {
-        var validation = validationService.validateCart(userId);
+        var validation = validationService.validateCart(String.valueOf(userId));
         return ResponseEntity.ok(new ApiResponse<>(true, "Cart validation completed", validation));
     }
 
@@ -88,8 +93,8 @@ public class CartController {
     public ResponseEntity<ApiResponse<?>> saveForLater(
             @PathVariable Long userId,
             @PathVariable Long itemId) {
-        var saved = cartService.saveForLater(userId, itemId);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Item saved for later successfully", saved));
+        cartService.saveForLater(userId, itemId);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Item saved for later successfully", null));
     }
 
     @GetMapping("/{userId}/saved-items")

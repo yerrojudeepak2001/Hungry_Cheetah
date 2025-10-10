@@ -4,8 +4,9 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import com.foodapp.cart.dto.OrderRequest;
 import com.foodapp.cart.dto.OrderResponse;
+import java.util.List;
 
-@FeignClient(name = "ORDER-SERVICE", fallback = OrderClientFallback.class)
+@FeignClient(name = "ORDER-SERVICE", fallback = com.foodapp.cart.client.fallback.OrderClientFallback.class)
 public interface OrderClient {
     @PostMapping("/api/orders")
     OrderResponse createOrder(@RequestBody OrderRequest request);
