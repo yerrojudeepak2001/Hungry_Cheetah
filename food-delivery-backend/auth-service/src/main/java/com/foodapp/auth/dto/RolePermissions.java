@@ -1,5 +1,6 @@
 package com.foodapp.auth.dto;
 
+<<<<<<< HEAD
 import java.util.Set;
 
 public class RolePermissions {
@@ -22,4 +23,13 @@ public class RolePermissions {
     public void setPermissions(Set<String> permissions) {
         this.permissions = permissions;
     }
+=======
+import lombok.Data;
+import java.util.List;
+
+@Data
+public class RolePermissions {
+    private String role;
+    private List<String> permissions;
+>>>>>>> version1.4
 }

@@ -1,5 +1,6 @@
 package com.foodapp.common.security;
 
+<<<<<<< HEAD
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -7,6 +8,11 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+=======
+import com.foodapp.common.constants.AppConstants;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+>>>>>>> version1.4
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -14,8 +20,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+<<<<<<< HEAD
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+=======
+>>>>>>> version1.4
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +39,10 @@ public class JwtTokenProvider {
 
     @Value("${jwt.expiration}")
     private long jwtExpiration;
+    
+    private SecretKey getSecretKey() {
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
+    }
 
     private SecretKey getSigningKey() {
         byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
@@ -55,11 +68,19 @@ public class JwtTokenProvider {
         Date expiryDate = new Date(now.getTime() + jwtExpiration);
 
         return Jwts.builder()
+<<<<<<< HEAD
                 .claims(claims)  // use claims() instead of setClaims()
                 .subject(subject) // use subject() instead of setSubject()
                 .issuedAt(now)   // use issuedAt() instead of setIssuedAt()
                 .expiration(expiryDate) // use expiration() instead of setExpiration()
                 .signWith(getSigningKey())
+=======
+                .claims(claims)
+                .subject(subject)
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(getSecretKey())
+>>>>>>> version1.4
                 .compact();
     }
 
@@ -77,8 +98,13 @@ public class JwtTokenProvider {
     }
 
     private Claims getAllClaimsFromToken(String token) {
+<<<<<<< HEAD
         return Jwts.parser()  // use parser() directly
                 .verifyWith(getSigningKey()) // use verifyWith() instead of setSigningKey()
+=======
+        return Jwts.parser()
+                .verifyWith(getSecretKey())
+>>>>>>> version1.4
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
@@ -86,8 +112,13 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
+<<<<<<< HEAD
             Jwts.parser() // use parser() directly
                 .verifyWith(getSigningKey()) // use verifyWith() instead of setSigningKey()
+=======
+            Jwts.parser()
+                .verifyWith(getSecretKey())
+>>>>>>> version1.4
                 .build()
                 .parseSignedClaims(token);
             return true;
@@ -111,6 +142,7 @@ public class JwtTokenProvider {
     }
 
     public String refreshToken(String token) {
+<<<<<<< HEAD
         final Date now = new Date();
         final Date expiryDate = calculateExpirationDate(now);
 
@@ -122,6 +154,18 @@ public class JwtTokenProvider {
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(getSigningKey())
+=======
+        final Date createdDate = new Date();
+        final Date expirationDate = calculateExpirationDate(createdDate);
+
+        final Claims claims = getAllClaimsFromToken(token);
+        
+        return Jwts.builder()
+                .claims(claims)
+                .issuedAt(createdDate)
+                .expiration(expirationDate)
+                .signWith(getSecretKey())
+>>>>>>> version1.4
                 .compact();
     }
 

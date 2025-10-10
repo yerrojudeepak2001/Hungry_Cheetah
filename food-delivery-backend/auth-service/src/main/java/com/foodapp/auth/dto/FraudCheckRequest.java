@@ -1,5 +1,6 @@
 package com.foodapp.auth.dto;
 
+<<<<<<< HEAD
 import jakarta.validation.constraints.NotBlank;
 
 public class FraudCheckRequest {
@@ -41,4 +42,14 @@ public class FraudCheckRequest {
     public void setLocation(String location) {
         this.location = location;
     }
+=======
+import lombok.Data;
+
+@Data
+public class FraudCheckRequest {
+    private String userId;
+    private String ipAddress;
+    private String deviceId;
+    private String action;
+>>>>>>> version1.4
 }

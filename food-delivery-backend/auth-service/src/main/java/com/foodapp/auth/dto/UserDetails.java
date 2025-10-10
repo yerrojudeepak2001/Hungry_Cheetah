@@ -1,14 +1,23 @@
 package com.foodapp.auth.dto;
 
+<<<<<<< HEAD
 import java.util.Set;
 
 public class UserDetails {
     private Long id;
+=======
+import lombok.Data;
+
+@Data
+public class UserDetails {
+    private String userId;
+>>>>>>> version1.4
     private String username;
     private String email;
     private String firstName;
     private String lastName;
     private String phoneNumber;
+<<<<<<< HEAD
     private Set<String> roles;
     private boolean enabled;
 
@@ -76,4 +85,7 @@ public class UserDetails {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+=======
+    private String role;
+>>>>>>> version1.4
 }

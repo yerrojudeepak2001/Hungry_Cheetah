@@ -7,9 +7,14 @@ import com.foodapp.user.model.Address;
 import com.foodapp.user.service.UserService;
 import com.foodapp.user.service.PreferenceService;
 import com.foodapp.user.service.AddressService;
+<<<<<<< HEAD
 import java.util.List;
+=======
+>>>>>>> version1.4
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")

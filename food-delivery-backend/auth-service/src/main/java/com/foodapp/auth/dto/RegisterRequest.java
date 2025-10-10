@@ -1,5 +1,6 @@
 package com.foodapp.auth.dto;
 
+<<<<<<< HEAD
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -84,4 +85,23 @@ public class RegisterRequest {
     public void setRoles(Set<String> roles) {
         this.roles = roles;
     }
+=======
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+
+@Data
+public class RegisterRequest {
+    @NotBlank(message = "Username is required")
+    private String username;
+    
+    @NotBlank(message = "Email is required")
+    private String email;
+    
+    @NotBlank(message = "Password is required")
+    private String password;
+    
+    private String firstName;
+    private String lastName;
+    private String phoneNumber;
+>>>>>>> version1.4
 }

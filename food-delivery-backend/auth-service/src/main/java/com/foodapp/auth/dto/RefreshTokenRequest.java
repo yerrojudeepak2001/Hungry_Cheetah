@@ -1,5 +1,6 @@
 package com.foodapp.auth.dto;
 
+<<<<<<< HEAD
 import jakarta.validation.constraints.NotBlank;
 
 public class RefreshTokenRequest {
@@ -14,4 +15,11 @@ public class RefreshTokenRequest {
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
+=======
+import lombok.Data;
+
+@Data
+public class RefreshTokenRequest {
+    private String refreshToken;
+>>>>>>> version1.4
 }

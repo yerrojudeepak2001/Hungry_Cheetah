@@ -2,13 +2,16 @@ package com.foodapp.gateway.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
+<<<<<<< HEAD
 import com.foodapp.gateway.dto.ServiceHealth;
+=======
+>>>>>>> version1.4
 import java.util.Map;
 
-@FeignClient(name = "SERVICE-HEALTH", fallback = ServiceHealthClientFallback.class)
+@FeignClient(name = "SERVICE-HEALTH")
 public interface ServiceHealthClient {
     @GetMapping("/actuator/health")
-    ServiceHealth checkHealth();
+    Map<String, Object> checkHealth();
     
     @GetMapping("/actuator/metrics")
     Map<String, Object> getMetrics();

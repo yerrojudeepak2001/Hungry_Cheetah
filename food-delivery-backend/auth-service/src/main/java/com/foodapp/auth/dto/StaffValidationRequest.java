@@ -1,5 +1,6 @@
 package com.foodapp.auth.dto;
 
+<<<<<<< HEAD
 import jakarta.validation.constraints.NotBlank;
 
 public class StaffValidationRequest {
@@ -36,4 +37,12 @@ public class StaffValidationRequest {
     public void setRole(String role) {
         this.role = role;
     }
+=======
+import lombok.Data;
+
+@Data
+public class StaffValidationRequest {
+    private String staffId;
+    private String restaurantId;
+>>>>>>> version1.4
 }

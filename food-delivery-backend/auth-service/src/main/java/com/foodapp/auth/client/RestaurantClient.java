@@ -9,14 +9,13 @@ import java.util.List;
 
 @FeignClient(name = "RESTAURANT-SERVICE", fallback = RestaurantClientFallback.class)
 public interface RestaurantClient {
-    @GetMapping("/api/restaurants/{restaurantId}/staff/{userId}/permissions")
-    RolePermissions getStaffPermissions(@PathVariable("restaurantId") String restaurantId,
-                                      @PathVariable("userId") String userId);
+    @GetMapping("/api/restaurants/{restaurantId}/permissions/{role}")
+    RolePermissions getRolePermissions(@PathVariable("restaurantId") String restaurantId,
+                                     @PathVariable("role") String role);
     
-    @PostMapping("/api/restaurants/{restaurantId}/staff/validate")
-    boolean validateStaffAccess(@PathVariable("restaurantId") String restaurantId,
-                              @RequestBody StaffValidationRequest request);
+    @PostMapping("/api/restaurants/staff/validate") 
+    Boolean validateStaff(@RequestBody StaffValidationRequest request);
                               
-    @GetMapping("/api/restaurants/owner/{userId}")
-    List<String> getOwnedRestaurants(@PathVariable("userId") String userId);
+    @GetMapping("/api/restaurants/owner/{ownerId}")
+    List<String> getRestaurantsByOwner(@PathVariable("ownerId") String ownerId);
 }
