@@ -1,7 +1,9 @@
 package com.foodapp.auth.dto;
 
+import lombok.Data;
 import java.time.LocalDateTime;
 
+@Data
 public class SuspiciousActivityReport {
     private String userId;
     private String activityType;
@@ -67,11 +69,4 @@ public class SuspiciousActivityReport {
     public void setSeverityLevel(int severityLevel) {
         this.severityLevel = severityLevel;
     }
-import lombok.Data;
-
-@Data
-public class SuspiciousActivityReport {
-    private String activityType;
-    private String description;
-    private String timestamp;
 }

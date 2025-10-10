@@ -45,10 +45,6 @@ public class AuthService {
         user.setRoles(roles);
 
         userRepository.save(user);
-        return jwtService.generateToken(user.getUsername());
-        user.setRole("USER");
-
-        userRepository.save(user);
         return jwtTokenProvider.generateToken(user.getUsername());
     }
 
@@ -60,7 +56,6 @@ public class AuthService {
             throw new RuntimeException("Invalid credentials");
         }
 
-        return jwtService.generateToken(user.getUsername());
         return jwtTokenProvider.generateToken(user.getUsername());
     }
 

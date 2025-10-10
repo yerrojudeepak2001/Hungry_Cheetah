@@ -9,25 +9,21 @@ import java.util.List;
 
 @Component
 public class RestaurantClientFallback implements RestaurantClient {
-    @Override
     public RolePermissions getStaffPermissions(String restaurantId, String userId) {
         return null;
     }
 
-    @Override
     public boolean validateStaffAccess(String restaurantId, StaffValidationRequest request) {
         return false;
     }
 
-    @Override
     public List<String> getOwnedRestaurants(String userId) {
         return Collections.emptyList();
+    }
     
-    @Override
     public RolePermissions getRolePermissions(String restaurantId, String role) {
         RolePermissions permissions = new RolePermissions();
-        permissions.setRole(role);
-        permissions.setPermissions(List.of("READ"));
+        // Return fallback permissions
         return permissions;
     }
     
