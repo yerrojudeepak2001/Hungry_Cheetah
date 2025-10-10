@@ -1,0 +1,17 @@
+com\foodapp\user\model\UserPreference.class
+com\foodapp\user\repository\UserRepository.class
+com\foodapp\user\client\RestaurantClient.class
+com\foodapp\user\UserServiceApplication.class
+com\foodapp\user\service\EmailService.class
+com\foodapp\user\model\Preference.class
+com\foodapp\user\service\SmsService.class
+com\foodapp\user\client\OrderClient.class
+com\foodapp\user\model\Address.class
+com\foodapp\user\service\UserService.class
+com\foodapp\user\service\AddressService.class
+com\foodapp\user\model\User.class
+com\foodapp\user\dto\OrderResponse.class
+com\foodapp\user\dto\UserOrderStats.class
+com\foodapp\user\service\PreferenceService.class
+com\foodapp\user\controller\UserController.class
+com\foodapp\user\dto\RestaurantResponse.class

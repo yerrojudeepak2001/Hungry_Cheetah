@@ -1,23 +1,24 @@
 package com.foodapp.config.configuration;
 
 import org.springframework.cloud.config.server.EnableConfigServer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableConfigServer
-public class ConfigServerConfiguration extends WebSecurityConfigurerAdapter {
+public class ConfigServerConfiguration {
     
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf()
-                .disable()
-            .authorizeRequests()
-                .antMatchers("/actuator/**").permitAll()
-                .anyRequest().authenticated()
-            .and()
-                .httpBasic();
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(authz -> authz
+                .requestMatchers("/actuator/**").permitAll()
+                .anyRequest().authenticated())
+            .httpBasic(httpBasic -> {});
+        
+        return http.build();
     }
 }

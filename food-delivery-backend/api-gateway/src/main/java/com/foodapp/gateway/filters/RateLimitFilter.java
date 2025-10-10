@@ -1,24 +1,24 @@
 package com.foodapp.gateway.filters;
 
-import io.github.resilience4j.ratelimiter.RateLimiter;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class RateLimitFilter extends AbstractGatewayFilterFactory<RateLimitFilter.Config> {
-    private final RateLimiter rateLimiter;
+    private final AtomicInteger requestCount = new AtomicInteger(0);
 
-    public RateLimitFilter(RateLimiter rateLimiter) {
+    public RateLimitFilter() {
         super(Config.class);
-        this.rateLimiter = rateLimiter;
     }
 
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
-            if (!rateLimiter.acquirePermission()) {
+            int count = requestCount.incrementAndGet();
+            if (count > config.getLimit()) {
                 exchange.getResponse().setStatusCode(HttpStatus.TOO_MANY_REQUESTS);
                 return exchange.getResponse().setComplete();
             }
@@ -27,7 +27,7 @@ public class RateLimitFilter extends AbstractGatewayFilterFactory<RateLimitFilte
     }
 
     public static class Config {
-        private Integer limit;
+        private Integer limit = 100;
         private Integer refreshPeriod;
 
         public Integer getLimit() {

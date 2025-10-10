@@ -2,12 +2,14 @@ package com.foodapp.common.security;
 
 import com.foodapp.common.constants.AppConstants;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +24,10 @@ public class JwtTokenProvider {
 
     @Value("${jwt.expiration}")
     private long jwtExpiration;
+    
+    private SecretKey getSecretKey() {
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
+    }
 
     public String generateToken(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -42,11 +48,11 @@ public class JwtTokenProvider {
         Date expiryDate = new Date(now.getTime() + jwtExpiration);
 
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .claims(claims)
+                .subject(subject)
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(getSecretKey())
                 .compact();
     }
 
@@ -65,14 +71,18 @@ public class JwtTokenProvider {
 
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody();
+                .verifyWith(getSecretKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            Jwts.parser()
+                .verifyWith(getSecretKey())
+                .build()
+                .parseSignedClaims(token);
             return true;
         } catch (SignatureException ex) {
             log.error("Invalid JWT signature");
@@ -98,12 +108,12 @@ public class JwtTokenProvider {
         final Date expirationDate = calculateExpirationDate(createdDate);
 
         final Claims claims = getAllClaimsFromToken(token);
-        claims.setIssuedAt(createdDate);
-        claims.setExpiration(expirationDate);
-
+        
         return Jwts.builder()
-                .setClaims(claims)
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .claims(claims)
+                .issuedAt(createdDate)
+                .expiration(expirationDate)
+                .signWith(getSecretKey())
                 .compact();
     }
 

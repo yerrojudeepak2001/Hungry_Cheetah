@@ -8,6 +8,8 @@ import com.foodapp.common.exception.DuplicateResourceException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 import java.time.LocalDateTime;
 
 @Service
@@ -132,5 +134,28 @@ public class UserService {
     private String generateVerificationCode() {
         // Implement verification code generation logic
         return "123456"; // Placeholder
+    }
+    
+    public User getUserProfile(Long userId) {
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+    
+    public List<String> getOrderHistory(Long userId) {
+        // TODO: Implement order history retrieval
+        return List.of();
+    }
+    
+    public List<String> getFavoriteRestaurants(Long userId) {
+        // TODO: Implement favorite restaurants retrieval
+        return List.of();
+    }
+    
+    public void addFavoriteRestaurant(Long userId, Long restaurantId) {
+        // TODO: Implement add favorite restaurant
+    }
+    
+    public void removeFavoriteRestaurant(Long userId, Long restaurantId) {
+        // TODO: Implement remove favorite restaurant
     }
 }
