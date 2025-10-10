@@ -1,9 +1,5 @@
 package com.foodapp.user.model;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "user_preferences")
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -33,60 +29,4 @@ public class Preference {
     private String category;
     
     private Boolean active;
-
-    // Getters and setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-    private String name;
-    private String value;
-    private String category; // DIETARY, NOTIFICATION, PRIVACY, etc.
-    
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
 }

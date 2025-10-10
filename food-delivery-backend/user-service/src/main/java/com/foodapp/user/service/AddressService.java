@@ -25,6 +25,19 @@ public class AddressService {
         }
         return addressRepository.save(address);
     }
+    
+    @Transactional
+    public Address addAddress(Long userId, Address address) {
+        // TODO: This would typically fetch the user from database
+        User user = new User();
+        user.setId(userId);
+        address.setUser(user);
+        
+        if (address.isDefault()) {
+            addressRepository.resetDefaultAddress(userId);
+        }
+        return addressRepository.save(address);
+    }
 
     @Transactional
     public Address updateAddress(Long addressId, Address newAddress) {
@@ -63,37 +76,62 @@ public class AddressService {
         Address address = addressRepository.findById(addressId)
             .orElseThrow(() -> new RuntimeException("Address not found: " + addressId));
         addressRepository.delete(address);
-    
-    public List<Address> getUserAddresses(Long userId) {
-        // TODO: Implement address retrieval
-        return List.of();
     }
     
-    public Address saveAddress(Address address) {
-        // TODO: Implement address saving
-        return address;
-    }
-    
-    public void deleteAddress(Long addressId) {
-        // TODO: Implement address deletion
-    }
-    
+    @Transactional
     public void deleteAddress(Long userId, Long addressId) {
-        // TODO: Implement address deletion with user validation 
+        Address address = addressRepository.findById(addressId)
+            .orElseThrow(() -> new RuntimeException("Address not found: " + addressId));
+        
+        // Verify the address belongs to the user
+        if (!address.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Address does not belong to user: " + userId);
+        }
+        
+        addressRepository.delete(address);
     }
     
-    public Address setDefaultAddress(Long addressId, String userId) {
-        // TODO: Implement default address setting
-        return new Address();
+    @Transactional
+    public Address updateAddress(Long userId, Long addressId, Address newAddress) {
+        Address existingAddress = addressRepository.findById(addressId)
+            .orElseThrow(() -> new RuntimeException("Address not found: " + addressId));
+        
+        // Verify the address belongs to the user
+        if (!existingAddress.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Address does not belong to user: " + userId);
+        }
+        
+        // Update address fields
+        existingAddress.setStreetAddress(newAddress.getStreetAddress());
+        existingAddress.setCity(newAddress.getCity());
+        existingAddress.setState(newAddress.getState());
+        existingAddress.setPostalCode(newAddress.getPostalCode());
+        existingAddress.setCountry(newAddress.getCountry());
+        existingAddress.setApartment(newAddress.getApartment());
+        existingAddress.setLandmark(newAddress.getLandmark());
+        existingAddress.setAddressType(newAddress.getAddressType());
+        existingAddress.setLabel(newAddress.getLabel());
+        existingAddress.setLatitude(newAddress.getLatitude());
+        existingAddress.setLongitude(newAddress.getLongitude());
+        
+        if (newAddress.isDefault()) {
+            addressRepository.resetDefaultAddress(userId);
+            existingAddress.setDefault(true);
+        }
+        
+        return addressRepository.save(existingAddress);
     }
     
-    public Address addAddress(Long userId, Address address) {
-        // TODO: Implement add address
-        return address;
-    }
-    
-    public Address updateAddress(Long userId, Long addressId, Address address) {
-        // TODO: Implement update address
-        return address;
+    @Transactional
+    public Address setDefaultAddress(Long addressId, Long userId) {
+        Address address = addressRepository.findById(addressId)
+            .orElseThrow(() -> new RuntimeException("Address not found: " + addressId));
+        
+        // Reset all default addresses for the user
+        addressRepository.resetDefaultAddress(userId);
+        
+        // Set the new default
+        address.setDefault(true);
+        return addressRepository.save(address);
     }
 }

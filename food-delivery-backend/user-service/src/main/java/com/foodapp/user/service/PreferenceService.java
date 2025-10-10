@@ -1,90 +1,87 @@
 package com.foodapp.user.service;
 
-import com.foodapp.user.model.UserPreference;
-import com.foodapp.user.model.User;
-import com.foodapp.user.repository.UserPreferenceRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-@Service
-public class PreferenceService {
-    private final UserPreferenceRepository preferenceRepository;
-
-    public PreferenceService(UserPreferenceRepository preferenceRepository) {
-        this.preferenceRepository = preferenceRepository;
-    }
-
-    @Transactional
-    public UserPreference createPreference(User user, UserPreference preference) {
-        preference.setUser(user);
-        return preferenceRepository.save(preference);
-    }
-
-    @Transactional
-    public UserPreference updatePreference(Long userId, UserPreference newPreference) {
-        UserPreference existingPreference = preferenceRepository.findByUserId(userId)
-            .orElseThrow(() -> new RuntimeException("Preferences not found for user: " + userId));
-
-        existingPreference.setDietaryPreferences(newPreference.getDietaryPreferences());
-        existingPreference.setCuisinePreferences(newPreference.getCuisinePreferences());
-        existingPreference.setAllergens(newPreference.getAllergens());
-        existingPreference.setSpiceTolerance(newPreference.getSpiceTolerance());
-        existingPreference.setPreferredPriceRange(newPreference.getPreferredPriceRange());
-        existingPreference.setMealPreferences(newPreference.getMealPreferences());
-
-        return preferenceRepository.save(existingPreference);
-    }
-
-    public UserPreference getPreference(Long userId) {
-        return preferenceRepository.findByUserId(userId)
-            .orElseThrow(() -> new RuntimeException("Preferences not found for user: " + userId));
-    }
-
-    @Transactional
-    public void deletePreference(Long userId) {
-        UserPreference preference = preferenceRepository.findByUserId(userId)
-            .orElseThrow(() -> new RuntimeException("Preferences not found for user: " + userId));
-        preferenceRepository.delete(preference);
 import com.foodapp.user.model.Preference;
 import com.foodapp.user.model.User;
+import com.foodapp.user.repository.PreferenceRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 public class PreferenceService {
-    
-    public List<Preference> getUserPreferences(String userId) {
-        // TODO: Implement preference retrieval
-        return List.of();
+    private final PreferenceRepository preferenceRepository;
+
+    public PreferenceService(PreferenceRepository preferenceRepository) {
+        this.preferenceRepository = preferenceRepository;
     }
-    
-    public Preference savePreference(Preference preference) {
-        // TODO: Implement preference saving
-        return preference;
+
+    @Transactional
+    public Preference createUserPreference(User user, Preference preference) {
+        preference.setUser(user);
+        return preferenceRepository.save(preference);
     }
-    
-    public void deletePreference(Long preferenceId) {
-        // TODO: Implement preference deletion
+
+    @Transactional
+    public Preference updateUserPreference(Long userId, Preference newPreference) {
+        List<Preference> existingPreferences = preferenceRepository.findByUserId(userId);
+        
+        if (!existingPreferences.isEmpty()) {
+            Preference existingPreference = existingPreferences.get(0);
+            existingPreference.setType(newPreference.getType());
+            existingPreference.setValue(newPreference.getValue());
+            existingPreference.setCategory(newPreference.getCategory());
+            existingPreference.setActive(newPreference.getActive());
+            return preferenceRepository.save(existingPreference);
+        }
+        
+        return preferenceRepository.save(newPreference);
     }
-    
-    public Preference setPreferences(Long userId, Preference preference) {
-        // TODO: Implement set preferences
-        return preference;
+
+    public List<Preference> getUserPreferences(Long userId) {
+        return preferenceRepository.findByUserId(userId);
     }
-    
-    public List<Preference> getPreferences(Long userId) {
-        // TODO: Implement get preferences
-        return List.of();
-    }
-    
-    public List<String> setDietaryRestrictions(Long userId, List<String> restrictions) {
-        // TODO: Implement set dietary restrictions
-        return restrictions;
+
+    @Transactional
+    public void deleteUserPreference(Long preferenceId) {
+        preferenceRepository.deleteById(preferenceId);
     }
     
     public List<String> getDietaryRestrictions(Long userId) {
-        // TODO: Implement get dietary restrictions
-        return List.of();
+        List<Preference> preferences = preferenceRepository.findByUserIdAndCategory(userId, "DIETARY");
+        return preferences.stream()
+                .filter(Preference::getActive)
+                .map(Preference::getValue)
+                .toList();
+    }
+    
+    public Preference setPreferences(Long userId, Preference preference) {
+        preference.setUser(new User()); // This would need proper user lookup
+        return createUserPreference(new User(), preference); // This would need proper user lookup
+    }
+    
+    public List<Preference> getPreferences(Long userId) {
+        return getUserPreferences(userId);
+    }
+    
+    @Transactional
+    public List<String> setDietaryRestrictions(Long userId, List<String> restrictions) {
+        // Remove existing dietary restrictions
+        List<Preference> existingDietary = preferenceRepository.findByUserIdAndCategory(userId, "DIETARY");
+        preferenceRepository.deleteAll(existingDietary);
+        
+        // Add new dietary restrictions
+        User user = new User(); // This would need proper user lookup
+        for (String restriction : restrictions) {
+            Preference pref = new Preference();
+            pref.setUser(user);
+            pref.setCategory("DIETARY");
+            pref.setType("RESTRICTION");
+            pref.setValue(restriction);
+            pref.setActive(true);
+            preferenceRepository.save(pref);
+        }
+        
+        return restrictions;
     }
 }

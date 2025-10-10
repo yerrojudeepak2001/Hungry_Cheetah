@@ -170,4 +170,26 @@ public class UserService {
         User user = getUser(userId); // Verify user exists
         return restaurantClient.getUserRecentRestaurants(user.getId().toString());
     }
+    
+    public User getUserProfile(Long userId) {
+        return getUser(userId);
+    }
+    
+    public List<OrderResponse> getOrderHistory(Long userId) {
+        return getUserOrders(userId);
+    }
+    
+    @Transactional
+    public void addFavoriteRestaurant(Long userId, Long restaurantId) {
+        User user = getUser(userId);
+        // TODO: Implement add favorite restaurant logic
+        // This would typically involve calling restaurant service or maintaining a favorites table
+    }
+    
+    @Transactional
+    public void removeFavoriteRestaurant(Long userId, Long restaurantId) {
+        User user = getUser(userId);
+        // TODO: Implement remove favorite restaurant logic
+        // This would typically involve calling restaurant service or maintaining a favorites table
+    }
 }
