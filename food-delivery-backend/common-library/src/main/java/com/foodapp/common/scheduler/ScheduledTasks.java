@@ -3,12 +3,14 @@ package com.foodapp.common.scheduler;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ScheduledTasks {
+    
+    private static final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
 
     @Scheduled(fixedRate = 300000) // every 5 minutes
     public void healthCheck() {
