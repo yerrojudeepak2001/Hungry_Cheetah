@@ -2,6 +2,7 @@ package com.foodapp.restaurant.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
 import com.foodapp.restaurant.dto.KitchenOrder;
 import com.foodapp.restaurant.dto.KitchenStatus;
 

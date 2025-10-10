@@ -3,6 +3,8 @@ package com.foodapp.registry.client;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import com.foodapp.registry.dto.ServiceHealth;
+import com.foodapp.registry.dto.ServiceStatusUpdate;
+import java.util.Map;
 
 @FeignClient(name = "HEALTH-CHECK-CLIENT", fallback = HealthCheckClientFallback.class)
 public interface HealthCheckClient {

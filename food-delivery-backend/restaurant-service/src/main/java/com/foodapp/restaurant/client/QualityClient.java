@@ -2,6 +2,7 @@ package com.foodapp.restaurant.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 import com.foodapp.restaurant.dto.QualityCheck;
 import com.foodapp.restaurant.dto.SafetyReport;
 

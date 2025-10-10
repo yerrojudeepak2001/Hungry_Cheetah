@@ -4,6 +4,10 @@ import com.foodapp.common.dto.ApiResponse;
 import com.foodapp.user.model.User;
 import com.foodapp.user.model.Preference;
 import com.foodapp.user.model.Address;
+import com.foodapp.user.service.UserService;
+import com.foodapp.user.service.PreferenceService;
+import com.foodapp.user.service.AddressService;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

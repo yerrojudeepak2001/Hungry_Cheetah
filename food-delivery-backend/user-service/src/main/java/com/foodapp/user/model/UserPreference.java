@@ -3,7 +3,7 @@ package com.foodapp.user.model;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Set;
 
 @Data
