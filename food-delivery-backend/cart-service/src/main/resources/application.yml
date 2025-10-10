@@ -58,11 +58,6 @@ resilience4j:
       itemValidation:
         minimumNumberOfCalls: 5
         failureRateThreshold: 50
-  ratelimiter:
-    instances:
-      cartUpdates:
-        limitForPeriod: 100
-        limitRefreshPeriod: 1s
 
 management:
   endpoints:

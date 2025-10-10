@@ -3,6 +3,7 @@ package com.foodapp.gateway.client;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import com.foodapp.gateway.dto.ServiceHealth;
+import java.util.Map;
 
 @FeignClient(name = "SERVICE-HEALTH", fallback = ServiceHealthClientFallback.class)
 public interface ServiceHealthClient {

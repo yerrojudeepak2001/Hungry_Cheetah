@@ -1,13 +1,21 @@
 package com.foodapp.common.security;
 
-import com.foodapp.common.constants.AppConstants;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +30,11 @@ public class JwtTokenProvider {
 
     @Value("${jwt.expiration}")
     private long jwtExpiration;
+
+    private SecretKey getSigningKey() {
+        byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 
     public String generateToken(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -42,11 +55,11 @@ public class JwtTokenProvider {
         Date expiryDate = new Date(now.getTime() + jwtExpiration);
 
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .claims(claims)  // use claims() instead of setClaims()
+                .subject(subject) // use subject() instead of setSubject()
+                .issuedAt(now)   // use issuedAt() instead of setIssuedAt()
+                .expiration(expiryDate) // use expiration() instead of setExpiration()
+                .signWith(getSigningKey())
                 .compact();
     }
 
@@ -64,15 +77,19 @@ public class JwtTokenProvider {
     }
 
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody();
+        return Jwts.parser()  // use parser() directly
+                .verifyWith(getSigningKey()) // use verifyWith() instead of setSigningKey()
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            Jwts.parser() // use parser() directly
+                .verifyWith(getSigningKey()) // use verifyWith() instead of setSigningKey()
+                .build()
+                .parseSignedClaims(token);
             return true;
         } catch (SignatureException ex) {
             log.error("Invalid JWT signature");
@@ -94,16 +111,17 @@ public class JwtTokenProvider {
     }
 
     public String refreshToken(String token) {
-        final Date createdDate = new Date();
-        final Date expirationDate = calculateExpirationDate(createdDate);
+        final Date now = new Date();
+        final Date expiryDate = calculateExpirationDate(now);
 
-        final Claims claims = getAllClaimsFromToken(token);
-        claims.setIssuedAt(createdDate);
-        claims.setExpiration(expirationDate);
-
+        Claims oldClaims = getAllClaimsFromToken(token);
+        Map<String, Object> claims = new HashMap<>(oldClaims);
+        
         return Jwts.builder()
                 .setClaims(claims)
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(getSigningKey())
                 .compact();
     }
 

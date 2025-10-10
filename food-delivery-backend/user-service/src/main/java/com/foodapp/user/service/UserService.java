@@ -3,12 +3,18 @@ package com.foodapp.user.service;
 import com.foodapp.user.model.User;
 import com.foodapp.user.model.UserPreference;
 import com.foodapp.user.repository.UserRepository;
+import com.foodapp.user.client.OrderClient;
+import com.foodapp.user.client.RestaurantClient;
+import com.foodapp.user.dto.OrderResponse;
+import com.foodapp.user.dto.RestaurantResponse;
+import com.foodapp.user.dto.UserOrderStats;
 import com.foodapp.common.exception.ResourceNotFoundException;
 import com.foodapp.common.exception.DuplicateResourceException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -16,15 +22,21 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final SmsService smsService;
+    private final OrderClient orderClient;
+    private final RestaurantClient restaurantClient;
 
     public UserService(UserRepository userRepository,
                       PasswordEncoder passwordEncoder,
                       EmailService emailService,
-                      SmsService smsService) {
+                      SmsService smsService,
+                      OrderClient orderClient,
+                      RestaurantClient restaurantClient) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.smsService = smsService;
+        this.orderClient = orderClient;
+        this.restaurantClient = restaurantClient;
     }
 
     @Transactional
@@ -132,5 +144,30 @@ public class UserService {
     private String generateVerificationCode() {
         // Implement verification code generation logic
         return "123456"; // Placeholder
+    }
+
+    public List<OrderResponse> getUserOrders(Long userId) {
+        User user = getUser(userId); // Verify user exists
+        return orderClient.getUserOrders(user.getId().toString());
+    }
+
+    public List<OrderResponse> getUserActiveOrders(Long userId) {
+        User user = getUser(userId); // Verify user exists
+        return orderClient.getUserActiveOrders(user.getId().toString());
+    }
+
+    public UserOrderStats getUserOrderStats(Long userId) {
+        User user = getUser(userId); // Verify user exists
+        return orderClient.getUserOrderStats(user.getId().toString());
+    }
+
+    public List<RestaurantResponse> getFavoriteRestaurants(Long userId) {
+        User user = getUser(userId); // Verify user exists
+        return restaurantClient.getUserFavoriteRestaurants(user.getId().toString());
+    }
+
+    public List<RestaurantResponse> getRecentRestaurants(Long userId) {
+        User user = getUser(userId); // Verify user exists
+        return restaurantClient.getUserRecentRestaurants(user.getId().toString());
     }
 }

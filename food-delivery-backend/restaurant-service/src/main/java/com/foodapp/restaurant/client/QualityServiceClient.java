@@ -2,6 +2,8 @@ package com.foodapp.restaurant.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.time.LocalDateTime;
 import com.foodapp.restaurant.dto.QualityAudit;
 
 @FeignClient(name = "QUALITY-SERVICE", fallback = QualityClientFallback.class)

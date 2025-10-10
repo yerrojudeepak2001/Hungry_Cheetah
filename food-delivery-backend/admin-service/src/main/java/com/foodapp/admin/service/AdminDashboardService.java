@@ -21,7 +21,6 @@ public class AdminDashboardService {
     private final AnalyticsServiceClient analyticsServiceClient;
     private final MonitoringService monitoringService;
     
-    @Cacheable(value = "dashboardStats", key = "'current'")
     public DashboardStats getDashboardStats() {
         DashboardStats stats = new DashboardStats();
         
@@ -33,33 +32,17 @@ public class AdminDashboardService {
         stats.setActiveDeliveries(deliveryServiceClient.getActiveDeliveries());
         stats.setTotalRevenue(paymentServiceClient.getTotalRevenue());
         
-        // Get real-time metrics
-        stats.setCurrentOnlineUsers(monitoringService.getCurrentOnlineUsers());
-        stats.setSystemLoad(monitoringService.getSystemLoad());
-        
         return stats;
     }
     
     public SystemHealthDTO getSystemHealth() {
         SystemHealthDTO health = new SystemHealthDTO();
         
-        // Check all service healths
-        health.setServicesHealth(monitoringService.getAllServicesHealth());
-        health.setDatabaseHealth(monitoringService.getDatabaseHealth());
-        health.setCacheHealth(monitoringService.getCacheHealth());
-        health.setMessageQueueHealth(monitoringService.getMessageQueueHealth());
-        
-        // Get system metrics
-        health.setMemoryUsage(monitoringService.getMemoryUsage());
-        health.setCpuUsage(monitoringService.getCpuUsage());
-        health.setDiskUsage(monitoringService.getDiskUsage());
+        // Check all service healths through Eureka
+        health.setServicesHealth(getServiceHealthFromEureka());
         
         return health;
     }
-    
-    @Scheduled(fixedRate = 300000) // Every 5 minutes
-    public void updateSystemMetrics() {
-        monitoringService.collectSystemMetrics();
     }
     
     public void clearAllCaches() {

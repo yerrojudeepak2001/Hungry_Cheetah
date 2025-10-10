@@ -2,6 +2,9 @@ package com.foodapp.auth.service;
 
 import com.foodapp.auth.model.User;
 import com.foodapp.auth.repository.UserRepository;
+import com.foodapp.auth.dto.RegisterRequest;
+import com.foodapp.auth.dto.LoginRequest;
+import java.util.Set;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,23 +31,31 @@ public class AuthService {
 
         User user = new User();
         user.setEmail(request.getEmail());
+        user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setFullName(request.getFullName());
-        user.setRole("USER");
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setPhoneNumber(request.getPhoneNumber());
+        
+        Set<String> roles = request.getRoles();
+        if (roles == null || roles.isEmpty()) {
+            roles = Set.of("USER");
+        }
+        user.setRoles(roles);
 
         userRepository.save(user);
-        return jwtService.generateToken(user.getEmail());
+        return jwtService.generateToken(user.getUsername());
     }
 
     public String login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByUsername(request.getUsername())
             .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
 
-        return jwtService.generateToken(user.getEmail());
+        return jwtService.generateToken(user.getUsername());
     }
 
     public String refreshToken(String refreshToken) {

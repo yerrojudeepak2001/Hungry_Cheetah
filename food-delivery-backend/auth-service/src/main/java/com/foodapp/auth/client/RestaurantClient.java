@@ -3,6 +3,9 @@ package com.foodapp.auth.client;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import com.foodapp.auth.dto.RolePermissions;
+import com.foodapp.auth.dto.StaffValidationRequest;
+
+import java.util.List;
 
 @FeignClient(name = "RESTAURANT-SERVICE", fallback = RestaurantClientFallback.class)
 public interface RestaurantClient {

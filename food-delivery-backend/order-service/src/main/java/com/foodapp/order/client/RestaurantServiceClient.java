@@ -1,6 +1,7 @@
 package com.foodapp.order.client;
 
 import com.foodapp.common.dto.ApiResponse;
+import com.foodapp.order.dto.OrderDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 

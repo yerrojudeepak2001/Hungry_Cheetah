@@ -1,28 +1,25 @@
 package com.foodapp.cart.expiry;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class CartExpiryHandler {
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final CartRepository cartRepository;
     private final ExpiryPolicy expiryPolicy;
-    private static final String CART_KEY_PREFIX = "cart:";
 
     @Scheduled(fixedRate = 300000) // Run every 5 minutes
     public void handleExpiredCarts() {
-        Set<String> cartKeys = redisTemplate.keys(CART_KEY_PREFIX + "*");
         LocalDateTime now = LocalDateTime.now();
+        List<Cart> expiredCarts = cartRepository.findAllExpired(now.minusMinutes(expiryPolicy.getDefaultExpiryMinutes()));
 
-        for (String cartKey : cartKeys) {
-            Cart cart = (Cart) redisTemplate.opsForValue().get(cartKey);
-            if (cart != null && isCartExpired(cart, now)) {
+        for (Cart cart : expiredCarts) {
+            if (isCartExpired(cart, now)) {
                 handleCartExpiry(cart);
             }
         }
@@ -38,8 +35,8 @@ public class CartExpiryHandler {
         // Archive cart data if needed
         archiveCart(cart);
         
-        // Delete cart from Redis
-        redisTemplate.delete(CART_KEY_PREFIX + cart.getId());
+        // Delete cart from database
+        cartRepository.delete(cart);
         
         // Notify user if configured
         if (expiryPolicy.shouldNotifyUser(cart)) {

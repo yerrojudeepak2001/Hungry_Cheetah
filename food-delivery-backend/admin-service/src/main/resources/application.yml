@@ -32,10 +32,6 @@ admin:
     retention: 90 # days
   dashboard:
     refresh-interval: 30 # seconds
-  monitoring:
-    alerts:
-      email: ${ADMIN_ALERT_EMAIL}
-      enabled: true
 
 eureka:
   client:

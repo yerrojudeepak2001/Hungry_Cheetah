@@ -1,6 +1,9 @@
 package com.foodapp.auth.controller;
 
 import com.foodapp.auth.service.AuthService;
+import com.foodapp.auth.dto.RegisterRequest;
+import com.foodapp.auth.dto.LoginRequest;
+import com.foodapp.auth.dto.RefreshTokenRequest;
 import com.foodapp.common.dto.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

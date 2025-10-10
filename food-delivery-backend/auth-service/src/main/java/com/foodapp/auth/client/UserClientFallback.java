@@ -1,0 +1,28 @@
+package com.foodapp.auth.client;
+
+import com.foodapp.auth.dto.UserDetails;
+import com.foodapp.auth.dto.UserRegistrationRequest;
+import org.springframework.stereotype.Component;
+
+@Component
+public class UserClientFallback implements UserClient {
+    @Override
+    public UserDetails getUserDetails(String userId) {
+        return null;
+    }
+
+    @Override
+    public UserDetails getUserByEmail(String email) {
+        return null;
+    }
+
+    @Override
+    public UserDetails createUser(UserRegistrationRequest request) {
+        return null;
+    }
+
+    @Override
+    public void updateLastLogin(String userId) {
+        // Do nothing in fallback
+    }
+}
