@@ -6,7 +6,7 @@ import java.util.List;
 import com.foodapp.restaurant.dto.FeedbackData;
 import com.foodapp.restaurant.dto.RatingInfo;
 
-@FeignClient(name = "FEEDBACK-SERVICE", fallback = FeedbackClientFallback.class)
+@FeignClient(name = "FEEDBACK-SERVICE", fallback = com.foodapp.restaurant.client.fallback.FeedbackClientFallback.class)
 public interface FeedbackClient {
     @GetMapping("/api/feedback/restaurant/{restaurantId}")
     List<FeedbackData> getRestaurantFeedback(@PathVariable("restaurantId") String restaurantId);

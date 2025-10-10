@@ -4,8 +4,10 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import com.foodapp.restaurant.dto.POSMenuSync;
+import com.foodapp.restaurant.dto.POSOrderData;
+import com.foodapp.restaurant.dto.POSIntegrationStatus;
 
-@FeignClient(name = "POS-INTEGRATION-SERVICE", fallback = POSIntegrationClientFallback.class)
+@FeignClient(name = "POS-INTEGRATION-SERVICE", fallback = com.foodapp.restaurant.client.fallback.POSIntegrationClientFallback.class)
 public interface POSIntegrationClient {
     @PostMapping("/api/pos/{restaurantId}/menu/sync")
     void synchronizeMenu(@PathVariable("restaurantId") String restaurantId, 

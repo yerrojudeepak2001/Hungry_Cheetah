@@ -5,8 +5,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.time.LocalDateTime;
 import com.foodapp.restaurant.dto.QualityAudit;
+import com.foodapp.restaurant.dto.quality.QualityStandard;
+import com.foodapp.restaurant.dto.quality.QualityViolation;
+import com.foodapp.restaurant.dto.ImprovementPlan;
 
-@FeignClient(name = "QUALITY-SERVICE", fallback = QualityClientFallback.class)
+@FeignClient(name = "QUALITY-SERVICE", fallback = com.foodapp.restaurant.client.fallback.QualityClientFallback.class)
 public interface QualityServiceClient {
     @PostMapping("/api/quality/restaurant/{restaurantId}/audit")
     void submitQualityAudit(@PathVariable("restaurantId") String restaurantId,

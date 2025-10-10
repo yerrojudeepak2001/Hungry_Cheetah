@@ -5,8 +5,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.foodapp.restaurant.dto.MenuData;
 import com.foodapp.restaurant.dto.MenuItemAvailability;
+import com.foodapp.restaurant.dto.MenuSyncRequest;
 
-@FeignClient(name = "MENU-SERVICE", fallback = MenuClientFallback.class)
+@FeignClient(name = "MENU-SERVICE", fallback = com.foodapp.restaurant.client.fallback.MenuClientFallback.class)
 public interface MenuClient {
     @GetMapping("/api/menu/restaurant/{restaurantId}")
     MenuData getRestaurantMenu(@PathVariable("restaurantId") String restaurantId);

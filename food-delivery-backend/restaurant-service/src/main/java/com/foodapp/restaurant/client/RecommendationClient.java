@@ -5,8 +5,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.foodapp.restaurant.dto.RecommendationRequest;
 import com.foodapp.restaurant.dto.RecommendationResponse;
+import com.foodapp.restaurant.dto.RecommendationFeedback;
 
-@FeignClient(name = "RECOMMENDATION-SERVICE", fallback = RecommendationClientFallback.class)
+@FeignClient(name = "RECOMMENDATION-SERVICE", fallback = com.foodapp.restaurant.client.fallback.RecommendationClientFallback.class)
 public interface RecommendationClient {
     @PostMapping("/api/recommendations/personalized")
     RecommendationResponse getPersonalizedRecommendations(

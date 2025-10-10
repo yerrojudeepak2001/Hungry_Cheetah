@@ -4,9 +4,11 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.foodapp.restaurant.dto.InventoryUpdate;
-import com.foodapp.restaurant.dto.StockLevel;
+import com.foodapp.restaurant.dto.inventory.StockLevel;
+import com.foodapp.restaurant.dto.inventory.InventoryAlert;
+import com.foodapp.restaurant.dto.inventory.InventoryForecast;
 
-@FeignClient(name = "INVENTORY-SERVICE", fallback = InventoryClientFallback.class)
+@FeignClient(name = "INVENTORY-SERVICE", fallback = com.foodapp.restaurant.client.fallback.InventoryClientFallback.class)
 public interface InventoryClient {
     @GetMapping("/api/inventory/restaurant/{restaurantId}/stock")
     List<StockLevel> getCurrentStock(@PathVariable("restaurantId") String restaurantId);
