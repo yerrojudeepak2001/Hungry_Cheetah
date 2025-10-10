@@ -2,6 +2,10 @@ package com.foodapp.order.service;
 
 import com.foodapp.common.constants.AppConstants;
 import com.foodapp.common.dto.OrderDTO;
+import com.foodapp.common.exception.ResourceNotFoundException;
+import com.foodapp.order.model.Order;
+import com.foodapp.order.repository.OrderRepository;
+import com.foodapp.order.mapper.OrderMapper;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,27 +14,29 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
     private final JmsTemplate jmsTemplate;
     private final OrderRepository orderRepository;
+    private final OrderMapper orderMapper;
 
-    public OrderService(JmsTemplate jmsTemplate, OrderRepository orderRepository) {
+    public OrderService(JmsTemplate jmsTemplate, OrderRepository orderRepository, OrderMapper orderMapper) {
         this.jmsTemplate = jmsTemplate;
         this.orderRepository = orderRepository;
+        this.orderMapper = orderMapper;
     }
 
     @Transactional
     public OrderDTO createOrder(OrderDTO orderDTO) {
         // Save order to database
-        Order order = orderRepository.save(convertToEntity(orderDTO));
+        Order order = orderRepository.save(orderMapper.toEntity(orderDTO));
         
         // Publish order created event
         jmsTemplate.convertAndSend(AppConstants.ORDER_CREATED_QUEUE, order);
         
-        return convertToDTO(order);
+        return orderMapper.toDTO(order);
     }
 
     public OrderDTO getOrderStatus(Long orderId) {
         Order order = orderRepository.findById(orderId)
             .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
-        return convertToDTO(order);
+        return orderMapper.toDTO(order);
     }
 
     public void updateOrderStatus(Long orderId, String status) {

@@ -1,17 +1,22 @@
 package com.foodapp.order.model;
 
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-@Document(collection = "scheduled_orders")
+@Entity
+@Table(name = "scheduled_orders")
+@AllArgsConstructor
+@NoArgsConstructor
 public class ScheduledOrder {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private Long orderId;
     private Long userId;
     private Long restaurantId;
