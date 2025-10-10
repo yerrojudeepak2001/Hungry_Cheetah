@@ -89,8 +89,6 @@ public class JwtTokenProvider {
     }
 
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser()  // use parser() directly
-                .verifyWith(getSigningKey()) // use verifyWith() instead of setSigningKey()
         return Jwts.parser()
                 .verifyWith(getSecretKey())
                 .build()
@@ -100,8 +98,6 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser() // use parser() directly
-                .verifyWith(getSigningKey()) // use verifyWith() instead of setSigningKey()
             Jwts.parser()
                 .verifyWith(getSecretKey())
                 .build()
@@ -127,17 +123,6 @@ public class JwtTokenProvider {
     }
 
     public String refreshToken(String token) {
-        final Date now = new Date();
-        final Date expiryDate = calculateExpirationDate(now);
-
-        Claims oldClaims = getAllClaimsFromToken(token);
-        Map<String, Object> claims = new HashMap<>(oldClaims);
-        
-        return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(getSigningKey())
         final Date createdDate = new Date();
         final Date expirationDate = calculateExpirationDate(createdDate);
 
