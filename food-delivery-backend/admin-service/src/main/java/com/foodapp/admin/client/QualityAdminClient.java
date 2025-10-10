@@ -2,7 +2,10 @@ package com.foodapp.admin.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
-import com.foodapp.admin.dto.QualityReport;
+import com.foodapp.admin.dto.*;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @FeignClient(name = "QUALITY-SERVICE", fallback = QualityClientFallback.class)
 public interface QualityAdminClient {
