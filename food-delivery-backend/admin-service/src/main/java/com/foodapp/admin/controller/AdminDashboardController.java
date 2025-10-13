@@ -1,9 +1,9 @@
 package com.foodapp.admin.controller;
 
+import com.foodapp.admin.dto.ApiResponse;
 import com.foodapp.admin.service.AdminDashboardService;
 import com.foodapp.admin.dto.DashboardStats;
 import com.foodapp.admin.dto.SystemHealthDTO;
-import com.foodapp.common.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/admin")
 @RequiredArgsConstructor
 public class AdminDashboardController {
-    
+
     private final AdminDashboardService dashboardService;
     
     @GetMapping("/dashboard/stats")
