@@ -1,5 +1,6 @@
 package com.foodapp.auth.service;
 
+import com.foodapp.auth.dto.TokenValidationResponse;
 import com.foodapp.auth.model.User;
 import com.foodapp.auth.repository.UserRepository;
 import com.foodapp.auth.dto.RegisterRequest;
@@ -70,5 +71,30 @@ public class AuthService {
 
     public void logout(String token) {
         // Invalidate token (add to blacklist if implemented)
+    }
+    
+    public boolean validateToken(String token) {
+        return jwtTokenProvider.validateToken(token);
+    }
+    
+    public TokenValidationResponse getUserInfo(String token) {
+        if (!validateToken(token)) {
+            throw new RuntimeException("Invalid token");
+        }
+        
+        String username = jwtTokenProvider.getUsernameFromToken(token);
+        return getUserInfoByUsername(username);
+    }
+    
+    public TokenValidationResponse getUserInfoByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+            
+        return new TokenValidationResponse(
+            user.getUsername(),
+            user.getEmail(),
+            user.getRoles(),
+            user.getId().toString()
+        );
     }
 }

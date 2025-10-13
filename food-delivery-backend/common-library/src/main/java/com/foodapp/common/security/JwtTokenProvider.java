@@ -20,9 +20,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Component
@@ -64,11 +62,6 @@ public class JwtTokenProvider {
         Date expiryDate = new Date(now.getTime() + jwtExpiration);
 
         return Jwts.builder()
-                .claims(claims)  // use claims() instead of setClaims()
-                .subject(subject) // use subject() instead of setSubject()
-                .issuedAt(now)   // use issuedAt() instead of setIssuedAt()
-                .expiration(expiryDate) // use expiration() instead of setExpiration()
-                .signWith(getSigningKey())
                 .claims(claims)
                 .subject(subject)
                 .issuedAt(now)
@@ -96,6 +89,13 @@ public class JwtTokenProvider {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public Set<String> getRolesFromToken(String token) {
+        Claims claims = getAllClaimsFromToken(token);
+        List<String> roles = (List<String>) claims.get("roles");
+        return roles != null ? new HashSet<>(roles) : Collections.emptySet();
     }
 
     public boolean validateToken(String token) {
