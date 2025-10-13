@@ -5,10 +5,10 @@ spring:
   application:
     name: tracking-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/foodapp_tracking
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:mysql://localhost:3306/foodapp_tracking?createDatabaseIfNotExist=true&useSSL=false
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
