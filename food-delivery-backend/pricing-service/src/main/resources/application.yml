@@ -49,19 +49,6 @@ feign:
         connectTimeout: 5000
         readTimeout: 5000
         loggerLevel: full
-  circuitbreaker:
-    enabled: true
-
-resilience4j:
-  circuitbreaker:
-    instances:
-      pricingCalculation:
-        minimumNumberOfCalls: 5
-        failureRateThreshold: 50
-  bulkhead:
-    instances:
-      dynamicPricing:
-        maxConcurrentCalls: 20
 
 management:
   endpoints:

@@ -21,7 +21,6 @@
         <spring-cloud.version>2023.0.0</spring-cloud.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <resilience4j.version>2.1.0</resilience4j.version>
     </properties>
 
     <modules>

@@ -17,10 +17,6 @@ spring:
     bootstrap-servers: localhost:9092
     consumer:
       group-id: admin-service-group
-  redis:
-    host: localhost
-    port: 6379
-    password: ${REDIS_PASSWORD}
 
   cloud:
       config:
@@ -52,20 +48,6 @@ feign:
         connectTimeout: 5000
         readTimeout: 5000
         loggerLevel: full
-  circuitbreaker:
-    enabled: true
-
-resilience4j:
-  circuitbreaker:
-    instances:
-      userManagement:
-        minimumNumberOfCalls: 5
-        failureRateThreshold: 50
-  ratelimiter:
-    instances:
-      adminOperations:
-        limitForPeriod: 100
-        limitRefreshPeriod: 1m
 
 management:
   endpoints:
