@@ -31,7 +31,6 @@ public class Address {
     private String country;
 
     private String apartment;
-
     private String landmark;
 
     @Column(name = "address_type", nullable = false)
@@ -51,4 +50,48 @@ public class Address {
 
     @Column
     private Double longitude;
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getStreetAddress() { return streetAddress; }
+    public void setStreetAddress(String streetAddress) { this.streetAddress = streetAddress; }
+
+    public String getCity() { return city; }
+    public void setCity(String city) { this.city = city; }
+
+    public String getState() { return state; }
+    public void setState(String state) { this.state = state; }
+
+    public String getPostalCode() { return postalCode; }
+    public void setPostalCode(String postalCode) { this.postalCode = postalCode; }
+
+    public String getCountry() { return country; }
+    public void setCountry(String country) { this.country = country; }
+
+    public String getApartment() { return apartment; }
+    public void setApartment(String apartment) { this.apartment = apartment; }
+
+    public String getLandmark() { return landmark; }
+    public void setLandmark(String landmark) { this.landmark = landmark; }
+
+    public String getAddressType() { return addressType; }
+    public void setAddressType(String addressType) { this.addressType = addressType; }
+
+    public String getLabel() { return label; }
+    public void setLabel(String label) { this.label = label; }
+
+    public boolean isDefault() { return isDefault; }
+    public void setDefault(boolean isDefault) { this.isDefault = isDefault; }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; } // ✅ Correct
+
+    public Double getLatitude() { return latitude; }
+    public void setLatitude(Double latitude) { this.latitude = latitude; }
+
+    public Double getLongitude() { return longitude; }
+    public void setLongitude(Double longitude) { this.longitude = longitude; }
+}
 }
