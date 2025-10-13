@@ -7,7 +7,11 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
-import lombok.extern.slf4j.Slf4j;
+import com.foodapp.common.constants.AppConstants;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,15 +25,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-@Slf4j
 @Component
 public class JwtTokenProvider {
+    
+    private static final Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
     
     @Value("${jwt.secret}")
     private String jwtSecret;
 
     @Value("${jwt.expiration}")
     private long jwtExpiration;
+    
+    private SecretKey getSecretKey() {
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
+    }
 
     private SecretKey getSigningKey() {
         byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
@@ -60,6 +69,11 @@ public class JwtTokenProvider {
                 .issuedAt(now)   // use issuedAt() instead of setIssuedAt()
                 .expiration(expiryDate) // use expiration() instead of setExpiration()
                 .signWith(getSigningKey())
+                .claims(claims)
+                .subject(subject)
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(getSecretKey())
                 .compact();
     }
 
@@ -77,8 +91,8 @@ public class JwtTokenProvider {
     }
 
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser()  // use parser() directly
-                .verifyWith(getSigningKey()) // use verifyWith() instead of setSigningKey()
+        return Jwts.parser()
+                .verifyWith(getSecretKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
@@ -86,8 +100,8 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser() // use parser() directly
-                .verifyWith(getSigningKey()) // use verifyWith() instead of setSigningKey()
+            Jwts.parser()
+                .verifyWith(getSecretKey())
                 .build()
                 .parseSignedClaims(token);
             return true;
@@ -111,17 +125,16 @@ public class JwtTokenProvider {
     }
 
     public String refreshToken(String token) {
-        final Date now = new Date();
-        final Date expiryDate = calculateExpirationDate(now);
+        final Date createdDate = new Date();
+        final Date expirationDate = calculateExpirationDate(createdDate);
 
-        Claims oldClaims = getAllClaimsFromToken(token);
-        Map<String, Object> claims = new HashMap<>(oldClaims);
+        final Claims claims = getAllClaimsFromToken(token);
         
         return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(getSigningKey())
+                .claims(claims)
+                .issuedAt(createdDate)
+                .expiration(expirationDate)
+                .signWith(getSecretKey())
                 .compact();
     }
 

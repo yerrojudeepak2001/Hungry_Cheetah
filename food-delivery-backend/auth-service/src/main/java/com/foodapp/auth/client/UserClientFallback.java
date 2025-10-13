@@ -8,17 +8,23 @@ import org.springframework.stereotype.Component;
 public class UserClientFallback implements UserClient {
     @Override
     public UserDetails getUserDetails(String userId) {
-        return null;
+        UserDetails userDetails = new UserDetails();
+        // Fallback response with basic data
+        return userDetails;
     }
-
+    
     @Override
     public UserDetails getUserByEmail(String email) {
-        return null;
+        UserDetails userDetails = new UserDetails();
+        // Fallback response with basic data
+        return userDetails;
     }
-
+    
     @Override
     public UserDetails createUser(UserRegistrationRequest request) {
-        return null;
+        UserDetails userDetails = new UserDetails();
+        // Fallback response with basic data
+        return userDetails;
     }
 
     @Override

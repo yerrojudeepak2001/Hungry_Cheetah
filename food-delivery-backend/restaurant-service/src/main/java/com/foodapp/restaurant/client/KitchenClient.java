@@ -3,10 +3,11 @@ package com.foodapp.restaurant.client;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
-import com.foodapp.restaurant.dto.KitchenOrder;
-import com.foodapp.restaurant.dto.KitchenStatus;
+import com.foodapp.restaurant.dto.kitchen.KitchenOrder;
+import com.foodapp.restaurant.dto.kitchen.KitchenStatus;
+import com.foodapp.restaurant.dto.kitchen.KitchenStatusUpdate;
 
-@FeignClient(name = "KITCHEN-SERVICE", fallback = KitchenClientFallback.class)
+@FeignClient(name = "KITCHEN-SERVICE", fallback = com.foodapp.restaurant.client.fallback.KitchenClientFallback.class)
 public interface KitchenClient {
     @PostMapping("/api/kitchen/orders")
     void sendToKitchen(@RequestBody KitchenOrder order);

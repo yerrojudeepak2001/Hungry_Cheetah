@@ -1,7 +1,9 @@
 package com.foodapp.auth.dto;
 
+import lombok.Data;
 import java.time.LocalDateTime;
 
+@Data
 public class SuspiciousActivityReport {
     private String userId;
     private String activityType;

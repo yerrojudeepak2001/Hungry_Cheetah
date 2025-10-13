@@ -1,5 +1,7 @@
 package com.foodapp.cart.expiry;
 
+import com.foodapp.cart.entity.Cart;
+import com.foodapp.cart.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -16,7 +18,7 @@ public class CartExpiryHandler {
     @Scheduled(fixedRate = 300000) // Run every 5 minutes
     public void handleExpiredCarts() {
         LocalDateTime now = LocalDateTime.now();
-        List<Cart> expiredCarts = cartRepository.findAllExpired(now.minusMinutes(expiryPolicy.getDefaultExpiryMinutes()));
+        List<Cart> expiredCarts = cartRepository.findAllExpired(now.minusMinutes(30));
 
         for (Cart cart : expiredCarts) {
             if (isCartExpired(cart, now)) {
@@ -27,6 +29,12 @@ public class CartExpiryHandler {
 
     private boolean isCartExpired(Cart cart, LocalDateTime now) {
         LocalDateTime lastUpdateTime = cart.getUpdatedAt();
+        if (lastUpdateTime == null) {
+            lastUpdateTime = cart.getCreatedAt();
+        }
+        if (lastUpdateTime == null) {
+            return true;
+        }
         Duration timeElapsed = Duration.between(lastUpdateTime, now);
         return timeElapsed.toMinutes() > expiryPolicy.getExpiryMinutes(cart);
     }

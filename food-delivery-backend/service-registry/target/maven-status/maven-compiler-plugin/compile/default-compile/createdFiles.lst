@@ -1,0 +1,5 @@
+com\foodapp\registry\client\HealthCheckClient.class
+com\foodapp\registry\dto\ServiceHealth.class
+com\foodapp\registry\dto\ServiceStatusUpdate.class
+com\foodapp\registry\ServiceRegistryApplication.class
+com\foodapp\registry\client\HealthCheckClientFallback.class

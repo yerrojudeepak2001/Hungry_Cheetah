@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.*;
 import com.foodapp.gateway.dto.ServiceHealth;
 import java.util.Map;
 
-@FeignClient(name = "SERVICE-HEALTH", fallback = ServiceHealthClientFallback.class)
+@FeignClient(name = "SERVICE-HEALTH")
 public interface ServiceHealthClient {
     @GetMapping("/actuator/health")
-    ServiceHealth checkHealth();
+    Map<String, Object> checkHealth();
     
     @GetMapping("/actuator/metrics")
     Map<String, Object> getMetrics();

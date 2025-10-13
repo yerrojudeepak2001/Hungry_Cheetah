@@ -156,3 +156,26 @@ public class UserService {
         restaurantClient.removeRestaurantFromFavorites(user.getId().toString(), restaurantId.toString());
     }
 }
+    
+    public User getUserProfile(Long userId) {
+        return getUser(userId);
+    }
+    
+    public List<OrderResponse> getOrderHistory(Long userId) {
+        return getUserOrders(userId);
+    }
+    
+    @Transactional
+    public void addFavoriteRestaurant(Long userId, Long restaurantId) {
+        User user = getUser(userId);
+        // TODO: Implement add favorite restaurant logic
+        // This would typically involve calling restaurant service or maintaining a favorites table
+    }
+    
+    @Transactional
+    public void removeFavoriteRestaurant(Long userId, Long restaurantId) {
+        User user = getUser(userId);
+        // TODO: Implement remove favorite restaurant logic
+        // This would typically involve calling restaurant service or maintaining a favorites table
+    }
+}

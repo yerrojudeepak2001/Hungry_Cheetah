@@ -3,10 +3,12 @@ package com.foodapp.restaurant.client;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import com.foodapp.restaurant.dto.QualityCheck;
-import com.foodapp.restaurant.dto.SafetyReport;
+import com.foodapp.restaurant.dto.quality.QualityCheck;
+import com.foodapp.restaurant.dto.quality.SafetyReport;
+import com.foodapp.restaurant.dto.quality.QualityIncident;
+import com.foodapp.restaurant.dto.quality.QualityStandard;
 
-@FeignClient(name = "QUALITY-SERVICE", fallback = QualityClientFallback.class)
+@FeignClient(name = "QUALITY-SERVICE", fallback = com.foodapp.restaurant.client.fallback.QualityClientFallback.class)
 public interface QualityClient {
     @PostMapping("/api/quality/checks")
     void submitQualityCheck(@RequestBody QualityCheck check);

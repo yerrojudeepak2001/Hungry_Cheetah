@@ -6,17 +6,16 @@ import com.foodapp.auth.dto.FraudCheckRequest;
 import com.foodapp.auth.dto.FraudCheckResponse;
 import com.foodapp.auth.dto.SuspiciousActivityReport;
 
+import java.util.List;
+
 @FeignClient(name = "FRAUD-DETECTION-SERVICE", fallback = FraudCheckClientFallback.class)
 public interface FraudDetectionClient {
-    @PostMapping("/api/fraud/check/login")
-    FraudCheckResponse checkLoginAttempt(@RequestBody FraudCheckRequest request);
+    @PostMapping("/api/fraud/check")
+    FraudCheckResponse checkForFraud(@RequestBody FraudCheckRequest request);
     
-    @PostMapping("/api/fraud/check/registration")
-    FraudCheckResponse checkRegistration(@RequestBody FraudCheckRequest request);
+    @PostMapping("/api/fraud/check/realtime")
+    FraudCheckResponse performRealTimeCheck(@RequestBody FraudCheckRequest request);
     
-    @PostMapping("/api/fraud/report")
-    void reportSuspiciousActivity(@RequestBody SuspiciousActivityReport report);
-    
-    @GetMapping("/api/fraud/user/{userId}/risk-score")
-    double getUserRiskScore(@PathVariable("userId") String userId);
+    @GetMapping("/api/fraud/user/{userId}/suspicious")
+    List<SuspiciousActivityReport> getSuspiciousActivities(@PathVariable("userId") String userId);
 }

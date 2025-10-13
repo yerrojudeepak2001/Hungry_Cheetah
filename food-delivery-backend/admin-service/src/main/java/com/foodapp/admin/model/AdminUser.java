@@ -1,7 +1,7 @@
 package com.foodapp.admin.model;
 
 import lombok.Data;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Data

@@ -2,7 +2,9 @@ package com.foodapp.admin.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
-import com.foodapp.admin.dto.RestaurantAdminInfo;
+import com.foodapp.admin.dto.*;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @FeignClient(name = "RESTAURANT-SERVICE", fallback = RestaurantClientFallback.class)
 public interface RestaurantClient {

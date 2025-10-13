@@ -1,5 +1,6 @@
 package com.foodapp.admin.client;
 
+import com.foodapp.admin.dto.*;
 import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.Collections;

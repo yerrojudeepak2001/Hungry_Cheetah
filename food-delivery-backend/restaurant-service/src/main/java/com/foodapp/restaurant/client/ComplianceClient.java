@@ -5,8 +5,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.foodapp.restaurant.dto.ComplianceCheck;
 import com.foodapp.restaurant.dto.RegulationUpdate;
+import com.foodapp.restaurant.dto.ComplianceResult;
+import com.foodapp.restaurant.dto.ComplianceRequirement;
+import com.foodapp.restaurant.dto.CertificateVerification;
 
-@FeignClient(name = "COMPLIANCE-SERVICE", fallback = ComplianceClientFallback.class)
+@FeignClient(name = "COMPLIANCE-SERVICE", fallback = com.foodapp.restaurant.client.fallback.ComplianceClientFallback.class)
 public interface ComplianceClient {
     @PostMapping("/api/compliance/check")
     ComplianceResult checkCompliance(@RequestBody ComplianceCheck check);

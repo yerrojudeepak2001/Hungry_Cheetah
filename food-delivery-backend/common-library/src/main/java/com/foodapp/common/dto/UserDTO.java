@@ -10,6 +10,6 @@ public class UserDTO {
     private String email;
     private String fullName;
     private String phoneNumber;
-    private List<AddressDTO> addresses;
+    private List<String> addresses; // Simplified to String list
     private Integer loyaltyPoints;
 }

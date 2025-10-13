@@ -1,8 +1,14 @@
 package com.foodapp.user.model;
 
+import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 
+@Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "addresses")
 public class Address {
     @Id
@@ -87,4 +93,5 @@ public class Address {
 
     public Double getLongitude() { return longitude; }
     public void setLongitude(Double longitude) { this.longitude = longitude; }
+}
 }

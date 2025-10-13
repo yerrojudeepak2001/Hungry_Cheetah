@@ -1,17 +1,10 @@
 package com.foodapp.auth.dto;
 
+import lombok.Data;
 import jakarta.validation.constraints.NotBlank;
 
+@Data
 public class RefreshTokenRequest {
     @NotBlank(message = "Refresh token is required")
     private String refreshToken;
-
-    // Getters and setters
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
 }

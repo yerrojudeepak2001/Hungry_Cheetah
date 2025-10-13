@@ -1,18 +1,23 @@
 package com.foodapp.order.model;
 
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
 @Data
-@Document(collection = "multi_restaurant_orders")
+@Entity
+@Table(name = "multi_restaurant_orders")
+@AllArgsConstructor
+@NoArgsConstructor
 public class MultiRestaurantOrder {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private Long userId;
     private LocalDateTime orderTime;
     private String status; // PROCESSING, CONFIRMED, IN_DELIVERY, COMPLETED
