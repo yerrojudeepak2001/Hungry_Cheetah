@@ -3,31 +3,43 @@ package com.foodapp.user.service;
 import com.foodapp.user.model.Address;
 import com.foodapp.user.model.User;
 import com.foodapp.user.repository.AddressRepository;
+import com.foodapp.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
 public class AddressService {
-    private final AddressRepository addressRepository;
 
-    public AddressService(AddressRepository addressRepository) {
+    private final AddressRepository addressRepository;
+    private final UserRepository userRepository;
+
+    public AddressService(AddressRepository addressRepository, UserRepository userRepository) {
         this.addressRepository = addressRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional
-    public Address addAddress(User user, Address address) {
-        address.setUser(user);
+    public Address addAddress(Long userId, Address address) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+
+        address.setUser(user); // assign User entity
+
         if (address.isDefault()) {
-            addressRepository.resetDefaultAddress(user.getId());
+            addressRepository.resetDefaultAddress(userId);
         }
+
         return addressRepository.save(address);
     }
 
     @Transactional
-    public Address updateAddress(Long addressId, Address newAddress) {
+    public Address updateAddress(Long userId, Long addressId, Address newAddress) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+
         Address existingAddress = addressRepository.findById(addressId)
-            .orElseThrow(() -> new RuntimeException("Address not found: " + addressId));
+                .orElseThrow(() -> new RuntimeException("Address not found: " + addressId));
 
         existingAddress.setStreetAddress(newAddress.getStreetAddress());
         existingAddress.setCity(newAddress.getCity());
@@ -40,7 +52,7 @@ public class AddressService {
         existingAddress.setLabel(newAddress.getLabel());
 
         if (newAddress.isDefault() && !existingAddress.isDefault()) {
-            addressRepository.resetDefaultAddress(existingAddress.getUser().getId());
+            addressRepository.resetDefaultAddress(userId);
             existingAddress.setDefault(true);
         }
 
@@ -49,7 +61,7 @@ public class AddressService {
 
     public Address getAddress(Long addressId) {
         return addressRepository.findById(addressId)
-            .orElseThrow(() -> new RuntimeException("Address not found: " + addressId));
+                .orElseThrow(() -> new RuntimeException("Address not found: " + addressId));
     }
 
     public List<Address> getUserAddresses(Long userId) {
@@ -57,9 +69,9 @@ public class AddressService {
     }
 
     @Transactional
-    public void deleteAddress(Long addressId) {
+    public void deleteAddress(Long addressId, Long id) {
         Address address = addressRepository.findById(addressId)
-            .orElseThrow(() -> new RuntimeException("Address not found: " + addressId));
+                .orElseThrow(() -> new RuntimeException("Address not found: " + addressId));
         addressRepository.delete(address);
     }
 }
