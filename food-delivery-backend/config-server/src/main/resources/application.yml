@@ -10,6 +10,10 @@ spring:
         git:
           uri: https://github.com/yerrojudeepak2001/Hungry_Cheetah.git
           clone-on-start: true
+  security:
+    user:
+      name: configuser
+      password: configpassword
 
 eureka:
   client:

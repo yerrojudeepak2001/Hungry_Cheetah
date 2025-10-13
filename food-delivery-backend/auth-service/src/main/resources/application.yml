@@ -5,14 +5,16 @@ spring:
   application:
     name: auth-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/foodapp_auth
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:mysql://100.122.144.43:3306/food_app
+    username: teamuser
+    password: password123
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+  config:
+      import: optional:configserver:http://configuser:configpassword@localhost:8888
   security:
     jwt:
       secret: ${JWT_SECRET}

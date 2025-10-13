@@ -4,10 +4,21 @@ server:
 spring:
   application:
     name: USER-SERVICE
+  datasource:
+    url: jdbc:mysql://100.122.144.43:3306/food_app
+    username: teamuser
+    password: password123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
   cloud:
     loadbalancer:
       ribbon:
         enabled: false
+  config:
+      import: optional:configserver:http://localhost:8888
 
 eureka:
   client:
