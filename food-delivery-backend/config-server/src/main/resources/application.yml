@@ -8,7 +8,7 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/your-username/food-delivery-config
+          uri: https://github.com/yerrojudeepak2001/Hungry_Cheetah.git
           clone-on-start: true
 
 eureka:
