@@ -6,7 +6,11 @@ import org.springframework.web.bind.annotation.*;
 import com.foodapp.admin.dto.*;
 import java.util.List;
 
-@FeignClient(name = "ORDER-SERVICE", fallback = OrderClientFallback.class)
+@FeignClient(
+    name = "ORDER-SERVICE", 
+    url = "${services.order-service.url:http://localhost:8085}",
+    fallback = OrderClientFallback.class
+)
 public interface OrderClient {
     
     // Statistics endpoints
