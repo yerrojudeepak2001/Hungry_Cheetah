@@ -1,9 +1,13 @@
 package com.foodapp.restaurant.service.impl;
 
+import com.foodapp.restaurant.document.ARMenuDocument;
+import com.foodapp.restaurant.document.VirtualTourDocument;
 import com.foodapp.restaurant.repository.ARMenuRepository;
 import com.foodapp.restaurant.repository.MenuItemRepository;
 import com.foodapp.restaurant.repository.RestaurantRepository;
 import com.foodapp.restaurant.repository.VirtualTourRepository;
+import com.foodapp.restaurant.repository.mongo.ARMenuMongoRepository;
+import com.foodapp.restaurant.repository.mongo.VirtualTourMongoRepository;
 import com.foodapp.restaurant.service.RestaurantService;
 import com.foodapp.restaurant.model.MenuItem;
 import com.foodapp.restaurant.model.Restaurant;
@@ -24,6 +28,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     private final ARMenuRepository arMenuRepository;
     private final VirtualTourRepository virtualTourRepository;
     private final MenuItemRepository menuItemRepository;
+    private final ARMenuMongoRepository arMenuMongoRepository;
+    private final VirtualTourMongoRepository virtualTourMongoRepository;
 
     @Override
     public Restaurant registerRestaurant(Restaurant restaurant) {
@@ -150,33 +156,67 @@ public class RestaurantServiceImpl implements RestaurantService {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new RuntimeException("Restaurant not found with id: " + restaurantId));
                 
-        // Check if an AR menu already exists for this restaurant
-        Optional<ARMenu> existingMenu = arMenuRepository.findByRestaurantId(restaurantId);
+        // Check if an AR menu already exists in MongoDB for this restaurant
+        Optional<ARMenuDocument> existingMenuDoc = arMenuMongoRepository.findByRestaurantId(restaurantId);
         
-        if (existingMenu.isPresent()) {
-            // Update existing AR menu
-            ARMenu updatedMenu = existingMenu.get();
-            updatedMenu.setModelUrl(arMenu.getModelUrl());
-            updatedMenu.setPreviewImageUrl(arMenu.getPreviewImageUrl());
-            updatedMenu.setDescription(arMenu.getDescription());
-            updatedMenu.setActive(arMenu.isActive());
-            return arMenuRepository.save(updatedMenu);
+        ARMenuDocument arMenuDocument;
+        if (existingMenuDoc.isPresent()) {
+            // Update existing AR menu in MongoDB
+            arMenuDocument = existingMenuDoc.get();
+            arMenuDocument.setModelUrl(arMenu.getModelUrl());
+            arMenuDocument.setPreviewImageUrl(arMenu.getPreviewImageUrl());
+            arMenuDocument.setDescription(arMenu.getDescription());
+            arMenuDocument.setActive(arMenu.isActive());
+            arMenuDocument.setUpdatedAt(LocalDateTime.now());
         } else {
-            // Create new AR menu
-            arMenu.setRestaurant(restaurant);
-            return arMenuRepository.save(arMenu);
+            // Create new AR menu document in MongoDB
+            arMenuDocument = ARMenuDocument.builder()
+                    .restaurantId(restaurantId)
+                    .restaurantName(restaurant.getName())
+                    .modelUrl(arMenu.getModelUrl())
+                    .previewImageUrl(arMenu.getPreviewImageUrl())
+                    .description(arMenu.getDescription())
+                    .isActive(arMenu.isActive())
+                    .status("ACTIVE")
+                    .uploadedAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .viewCount(0)
+                    .interactionCount(0)
+                    .build();
         }
+        
+        ARMenuDocument savedDoc = arMenuMongoRepository.save(arMenuDocument);
+        
+        // Convert back to ARMenu for response
+        arMenu.setId(Long.parseLong(savedDoc.getId().hashCode() + ""));
+        arMenu.setRestaurant(restaurant);
+        return arMenu;
     }
 
     @Override
     public ARMenu getARMenu(Long restaurantId) {
         // Verify restaurant exists
-        if (!restaurantRepository.existsById(restaurantId)) {
-            throw new RuntimeException("Restaurant not found with id: " + restaurantId);
-        }
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new RuntimeException("Restaurant not found with id: " + restaurantId));
         
-        return arMenuRepository.findByRestaurantId(restaurantId)
+        // Get AR menu from MongoDB
+        ARMenuDocument arMenuDoc = arMenuMongoRepository.findByRestaurantId(restaurantId)
                 .orElseThrow(() -> new RuntimeException("AR Menu not found for restaurant id: " + restaurantId));
+        
+        // Increment view count
+        arMenuDoc.setViewCount(arMenuDoc.getViewCount() + 1);
+        arMenuMongoRepository.save(arMenuDoc);
+        
+        // Convert to ARMenu entity
+        ARMenu arMenu = new ARMenu();
+        arMenu.setId(Long.parseLong(arMenuDoc.getId().hashCode() + ""));
+        arMenu.setRestaurant(restaurant);
+        arMenu.setModelUrl(arMenuDoc.getModelUrl());
+        arMenu.setPreviewImageUrl(arMenuDoc.getPreviewImageUrl());
+        arMenu.setDescription(arMenuDoc.getDescription());
+        arMenu.setActive(arMenuDoc.isActive());
+        
+        return arMenu;
     }
 
     @Override
@@ -185,33 +225,70 @@ public class RestaurantServiceImpl implements RestaurantService {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new RuntimeException("Restaurant not found with id: " + restaurantId));
                 
-        // Check if a virtual tour already exists for this restaurant
-        Optional<VirtualTour> existingTour = virtualTourRepository.findByRestaurantId(restaurantId);
+        // Check if a virtual tour already exists in MongoDB for this restaurant
+        Optional<VirtualTourDocument> existingTourDoc = virtualTourMongoRepository.findByRestaurantId(restaurantId);
         
-        if (existingTour.isPresent()) {
-            // Update existing virtual tour
-            VirtualTour updatedTour = existingTour.get();
-            updatedTour.setTourUrl(virtualTour.getTourUrl());
-            updatedTour.setThumbnailUrl(virtualTour.getThumbnailUrl());
-            updatedTour.setDescription(virtualTour.getDescription());
-            updatedTour.setActive(virtualTour.isActive());
-            return virtualTourRepository.save(updatedTour);
+        VirtualTourDocument virtualTourDocument;
+        if (existingTourDoc.isPresent()) {
+            // Update existing virtual tour in MongoDB
+            virtualTourDocument = existingTourDoc.get();
+            virtualTourDocument.setTourUrl(virtualTour.getTourUrl());
+            virtualTourDocument.setThumbnailUrl(virtualTour.getThumbnailUrl());
+            virtualTourDocument.setDescription(virtualTour.getDescription());
+            virtualTourDocument.setActive(virtualTour.isActive());
+            virtualTourDocument.setUpdatedAt(LocalDateTime.now());
         } else {
-            // Create new virtual tour
-            virtualTour.setRestaurant(restaurant);
-            virtualTour.setCreatedAt(LocalDateTime.now());
-            return virtualTourRepository.save(virtualTour);
+            // Create new virtual tour document in MongoDB
+            virtualTourDocument = VirtualTourDocument.builder()
+                    .restaurantId(restaurantId)
+                    .restaurantName(restaurant.getName())
+                    .tourUrl(virtualTour.getTourUrl())
+                    .tourType("360_PANORAMA")
+                    .thumbnailUrl(virtualTour.getThumbnailUrl())
+                    .description(virtualTour.getDescription())
+                    .isActive(virtualTour.isActive())
+                    .status("ACTIVE")
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .viewCount(0)
+                    .completionCount(0)
+                    .averageViewDuration(0.0)
+                    .build();
         }
+        
+        VirtualTourDocument savedDoc = virtualTourMongoRepository.save(virtualTourDocument);
+        
+        // Convert back to VirtualTour for response
+        virtualTour.setId(Long.parseLong(savedDoc.getId().hashCode() + ""));
+        virtualTour.setRestaurant(restaurant);
+        virtualTour.setCreatedAt(savedDoc.getCreatedAt());
+        return virtualTour;
     }
 
     @Override
     public VirtualTour getVirtualTour(Long restaurantId) {
         // Verify restaurant exists
-        if (!restaurantRepository.existsById(restaurantId)) {
-            throw new RuntimeException("Restaurant not found with id: " + restaurantId);
-        }
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new RuntimeException("Restaurant not found with id: " + restaurantId));
         
-        return virtualTourRepository.findByRestaurantId(restaurantId)
+        // Get virtual tour from MongoDB
+        VirtualTourDocument tourDoc = virtualTourMongoRepository.findByRestaurantId(restaurantId)
                 .orElseThrow(() -> new RuntimeException("Virtual Tour not found for restaurant id: " + restaurantId));
+        
+        // Increment view count
+        tourDoc.setViewCount(tourDoc.getViewCount() + 1);
+        virtualTourMongoRepository.save(tourDoc);
+        
+        // Convert to VirtualTour entity
+        VirtualTour virtualTour = new VirtualTour();
+        virtualTour.setId(Long.parseLong(tourDoc.getId().hashCode() + ""));
+        virtualTour.setRestaurant(restaurant);
+        virtualTour.setTourUrl(tourDoc.getTourUrl());
+        virtualTour.setThumbnailUrl(tourDoc.getThumbnailUrl());
+        virtualTour.setDescription(tourDoc.getDescription());
+        virtualTour.setActive(tourDoc.isActive());
+        virtualTour.setCreatedAt(tourDoc.getCreatedAt());
+        
+        return virtualTour;
     }
 }

@@ -4,6 +4,7 @@ server:
 spring:
   application:
     name: RESTAURANT-SERVICE
+  # MySQL Configuration for structured data (Restaurant, MenuItem, etc.)
   datasource:
     url: jdbc:mysql://100.122.144.43:3306/food_app
     username: teamuser
@@ -13,6 +14,17 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  # MongoDB Configuration for flexible data (Reviews, AR Menus, Virtual Tours)
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/restaurant_service
+      # Alternative configuration:
+      # host: localhost
+      # port: 27017
+      # database: restaurant_service
+      # username: mongouser
+      # password: mongopassword
+      # authentication-database: admin
   cloud:
     loadbalancer:
       ribbon:
