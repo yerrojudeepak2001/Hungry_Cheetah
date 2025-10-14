@@ -48,9 +48,9 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                         .contentType(MediaType.TEXT_PLAIN)
                         .bodyValue(token)
                         .retrieve()
-                        .onStatus(HttpStatus::is4xxClientError, response -> 
+                        .onStatus(status -> status.is4xxClientError(), response -> 
                             Mono.error(new RuntimeException("Invalid token")))
-                        .onStatus(HttpStatus::is5xxServerError, response -> 
+                        .onStatus(status -> status.is5xxServerError(), response -> 
                             Mono.error(new RuntimeException("Auth service error")))
                         .bodyToMono(Void.class)
                         .then(chain.filter(exchange));
