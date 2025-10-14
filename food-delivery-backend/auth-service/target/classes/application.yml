@@ -1,9 +1,9 @@
 server:
-  port: 8081
+  port: 8082
 
 spring:
   application:
-    name: auth-service
+    name: AUTH-SERVICE
   datasource:
     url: jdbc:mysql://100.122.144.43:3306/food_app
     username: teamuser
@@ -13,8 +13,11 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  cloud:
+    config:
+      enabled: false
   config:
-      import: optional:configserver:http://configuser:configpassword@localhost:8888
+    import: optional:configserver:http://configuser:configpassword@localhost:8888
   security:
     jwt:
       secret: ${JWT_SECRET:defaultSecretKeyForDevelopmentOnlyDoNotUseInProduction}
