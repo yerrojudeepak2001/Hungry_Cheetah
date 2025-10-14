@@ -8,7 +8,10 @@ spring:
     import: optional:configserver:http://localhost:8888
   cloud:
     config:
-      enabled: false
+      enabled: true
+      uri: http://localhost:8888
+      username: configuser
+      password: configpassword
     gateway:
       discovery:
         locator:

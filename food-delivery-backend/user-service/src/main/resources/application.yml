@@ -17,8 +17,10 @@ spring:
     loadbalancer:
       ribbon:
         enabled: false
+    config:
+      enabled: false
   config:
-      import: optional:configserver:http://localhost:8888
+    import: optional:configserver:http://localhost:8888
 
 eureka:
   client:

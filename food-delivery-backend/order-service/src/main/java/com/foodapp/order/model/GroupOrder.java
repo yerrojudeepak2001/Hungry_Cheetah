@@ -25,6 +25,7 @@ public class GroupOrder {
     private String status; // COLLECTING, ORDERED, DELIVERED
     
     // Participants
+    @Transient  // Use separate entity or ElementCollection with Embeddable
     private List<Participant> participants;
     private Integer minParticipants;
     private Integer maxParticipants;
@@ -34,6 +35,11 @@ public class GroupOrder {
     private BigDecimal totalAmount;
     private BigDecimal splitAmount;
     private String splitMethod; // EQUAL, CUSTOM
+    
+    @ElementCollection
+    @CollectionTable(name = "group_order_custom_splits", joinColumns = @JoinColumn(name = "group_order_id"))
+    @MapKeyColumn(name = "user_id")
+    @Column(name = "split_amount")
     private Map<Long, BigDecimal> customSplits;
     
     // Delivery
@@ -43,6 +49,11 @@ public class GroupOrder {
     
     // Payment
     private String paymentStatus;
+    
+    @ElementCollection
+    @CollectionTable(name = "group_order_payment_status", joinColumns = @JoinColumn(name = "group_order_id"))
+    @MapKeyColumn(name = "user_id")
+    @Column(name = "payment_status")
     private Map<Long, String> participantPaymentStatus;
     
     @Data
