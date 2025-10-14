@@ -1,4 +1,4 @@
-package com.foodapp.restaurant.repository;
+package com.foodapp.restaurant.repository.jpa;
 
 import com.foodapp.restaurant.model.ARMenu;
 import org.springframework.data.jpa.repository.JpaRepository;
