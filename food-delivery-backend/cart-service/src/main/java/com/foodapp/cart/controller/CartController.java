@@ -56,8 +56,8 @@ public class CartController {
     // Cart Validation
     @PostMapping("/{userId}/validate")
     public ResponseEntity<ApiResponse<?>> validateCart(@PathVariable Long userId) {
-        var validation = validationService.validateCart(String.valueOf(userId));
-        return ResponseEntity.ok(new ApiResponse<>(true, "Cart validation completed", validation));
+        cartService.validateCartItems(String.valueOf(userId));
+        return ResponseEntity.ok(new ApiResponse<>(true, "Cart validation completed", null));
     }
 
     // Smart Features

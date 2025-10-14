@@ -3,16 +3,24 @@ server:
 
 spring:
   application:
-    name: cart-service
+    name: CART-SERVICE
   datasource:
-    url: jdbc:postgresql://localhost:5432/foodapp_cart
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:mysql://100.122.144.43:3306/food_app
+    username: teamuser
+    password: password123
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+    config:
+      enabled: false
+  config:
+    import: optional:configserver:http://localhost:8888
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
