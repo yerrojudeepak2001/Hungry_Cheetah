@@ -6,7 +6,7 @@ import com.foodapp.auth.repository.UserRepository;
 import com.foodapp.auth.dto.RegisterRequest;
 import com.foodapp.auth.dto.LoginRequest;
 import java.util.Set;
-import com.foodapp.common.security.JwtTokenProvider;
+import com.foodapp.auth.config.JwtTokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

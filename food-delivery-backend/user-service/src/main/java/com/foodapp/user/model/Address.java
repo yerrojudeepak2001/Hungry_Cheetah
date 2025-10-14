@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Data
 @Entity
@@ -16,25 +17,25 @@ public class Address {
     private Long id;
 
     @Column(nullable = false)
-    private String streetAddress;
+    private String streetAddress = "Default Address";
 
     @Column(nullable = false)
-    private String city;
+    private String city = "Default City";
 
     @Column(nullable = false)
-    private String state;
+    private String state = "Default State";
 
     @Column(nullable = false)
-    private String postalCode;
+    private String postalCode = "00000";
 
     @Column(nullable = false)
-    private String country;
+    private String country = "India";
 
     private String apartment;
     private String landmark;
 
     @Column(name = "address_type", nullable = false)
-    private String addressType; // HOME, WORK, OTHER
+    private String addressType = "HOME"; // HOME, WORK, OTHER
 
     private String label;
 
@@ -43,6 +44,7 @@ public class Address {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     private User user;
 
     @Column

@@ -62,10 +62,10 @@ public class JwtTokenProvider {
         Date expiryDate = new Date(now.getTime() + jwtExpiration);
 
         return Jwts.builder()
-                .claims(claims)
                 .subject(subject)
                 .issuedAt(now)
                 .expiration(expiryDate)
+                .claims().add(claims).and()
                 .signWith(getSecretKey())
                 .compact();
     }

@@ -43,6 +43,11 @@ public class UserService {
     // ------------------- User Management -------------------
     @Transactional
     public User registerUser(User user) {
+        // Generate username if not provided
+        if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
+            user.setUsername(generateUsername(user.getEmail()));
+        }
+        
         validateUniqueFields(user);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setIsEnabled(true);
@@ -115,6 +120,22 @@ public class UserService {
     private void sendVerificationSms(User user) {
         String code = "123456"; // Replace with code generation
         smsService.sendVerificationSms(user.getPhone(), code);
+    }
+
+    private String generateUsername(String email) {
+        // Extract the part before @ and add a random number
+        String baseUsername = email.substring(0, email.indexOf("@")).toLowerCase();
+        // Remove any non-alphanumeric characters
+        baseUsername = baseUsername.replaceAll("[^a-zA-Z0-9]", "");
+        
+        // Add timestamp to make it unique
+        long timestamp = System.currentTimeMillis() % 10000; // Last 4 digits of current time
+        return baseUsername + timestamp;
+    }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
     }
 
     // ------------------- External Integrations -------------------

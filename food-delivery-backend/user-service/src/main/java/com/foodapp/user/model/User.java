@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +19,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @Column(nullable = true)
     private String username;
     private String email;
     private String password;
@@ -27,19 +29,30 @@ public class User {
     private LocalDateTime dateOfBirth;
     private String gender;
     
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @JsonManagedReference
     private List<Address> addresses;
     
     @ElementCollection
     private Set<String> roles;
     
+    @Column(name = "enabled")
     private Boolean isEnabled;
+    @Column(name = "email_verified") 
     private Boolean isEmailVerified;
+    @Column(name = "phone_verified")
     private Boolean isPhoneVerified;
+    @Column(name = "account_non_expired")
+    private Boolean accountNonExpired = true;
+    @Column(name = "account_non_locked")
+    private Boolean accountNonLocked = true;
+    @Column(name = "credentials_non_expired")
+    private Boolean credentialsNonExpired = true;
     private LocalDateTime lastLogin;
     private LocalDateTime registrationDate;
     
     @OneToOne(cascade = CascadeType.ALL)
+    @JsonManagedReference
     private UserPreference preferences;
     
     @ElementCollection

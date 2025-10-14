@@ -20,12 +20,12 @@ spring:
     import: optional:configserver:http://configuser:configpassword@localhost:8888
   security:
     jwt:
-      secret: ${JWT_SECRET:defaultSecretKeyForDevelopmentOnlyDoNotUseInProduction}
+      secret: ${JWT_SECRET:34510220d4bf1609c88acb0256b07a2e}
       expiration: 86400000 # 24 hours
 
 # JWT Configuration - Format that matches the JwtTokenProvider expectations
 jwt:
-  secret: ${JWT_SECRET:defaultSecretKeyForDevelopmentOnlyDoNotUseInProduction}
+  secret: ${JWT_SECRET:34510220d4bf1609c88acb0256b07a2e}
   expiration: 86400000 # 24 hours
 
 eureka:

@@ -11,7 +11,7 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 @EnableDiscoveryClient
 @ComponentScan(
     basePackages = {"com.foodapp.auth"},
-    includeFilters = {
+    excludeFilters = {
         @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = com.foodapp.common.security.JwtTokenProvider.class)
     }
 )

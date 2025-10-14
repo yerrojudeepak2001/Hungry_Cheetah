@@ -1,6 +1,7 @@
 package com.foodapp.user.controller;
 
 import com.foodapp.common.dto.ApiResponse;
+import com.foodapp.user.dto.DietaryRestrictionsRequest;
 import com.foodapp.user.model.User;
 import com.foodapp.user.model.UserPreference;
 import com.foodapp.user.model.Address;
@@ -9,8 +10,6 @@ import com.foodapp.user.service.PreferenceService;
 import com.foodapp.user.service.AddressService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
-
 import java.util.List;
 
 @RestController
@@ -69,8 +68,8 @@ public class UserController {
     @PostMapping("/{userId}/dietary-restrictions")
     public ResponseEntity<ApiResponse<?>> setDietaryRestrictions(
             @PathVariable Long userId,
-            @RequestBody List<String> restrictions) {
-        var updated = preferenceService.updateDietaryPreferences(userId, restrictions);
+            @RequestBody DietaryRestrictionsRequest request) {
+        var updated = preferenceService.updateDietaryPreferences(userId, request.getRestrictions());
         return ResponseEntity.ok(new ApiResponse<>(true, "Dietary restrictions updated successfully", updated));
     }
 

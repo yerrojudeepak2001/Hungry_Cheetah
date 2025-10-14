@@ -12,6 +12,7 @@ com\foodapp\auth\dto\TokenValidationResponse.class
 com\foodapp\auth\dto\UserDetails.class
 com\foodapp\auth\dto\UserRegistrationRequest.class
 com\foodapp\auth\dto\RolePermissions.class
+com\foodapp\auth\config\JwtTokenProvider.class
 com\foodapp\auth\client\UserClient.class
 com\foodapp\auth\client\FraudDetectionClient.class
 com\foodapp\auth\dto\FraudCheckResponse.class
