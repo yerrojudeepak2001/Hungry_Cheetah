@@ -7,7 +7,7 @@ import com.foodapp.user.dto.OrderResponse;
 import com.foodapp.user.dto.UserOrderStats;
 import java.util.List;
 
-@FeignClient(name = "ORDER-SERVICE")
+@FeignClient(name = "ORDER-SERVICE", fallback = OrderClientFallback.class)
 public interface OrderClient {
     @GetMapping("/api/orders/user/{userId}")
     List<OrderResponse> getUserOrders(@PathVariable("userId") String userId);

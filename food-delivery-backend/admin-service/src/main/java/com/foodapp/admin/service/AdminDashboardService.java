@@ -3,10 +3,8 @@ package com.foodapp.admin.service;
 import com.foodapp.admin.dto.DashboardStats;
 import com.foodapp.admin.dto.SystemHealthDTO;
 import com.foodapp.admin.dto.AuditLogDTO;
-import com.foodapp.admin.client.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.scheduling.annotation.Scheduled;
 import java.util.*;
 
 @Service

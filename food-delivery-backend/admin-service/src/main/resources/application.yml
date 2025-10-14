@@ -22,13 +22,16 @@ spring:
       enabled: false
   config:
     import: optional:configserver:http://localhost:8888
+  security:
+    user:
+      password: # Disable default password generation
 
+
+services:
+  auth-service:
+    url: ${AUTH_SERVICE_URL:http://localhost:8082}
 
 admin:
-  security:
-    jwt:
-      secret: ${ADMIN_JWT_SECRET}
-      expiration: 28800 # 8 hours
   audit:
     enabled: true
     retention: 90 # days
