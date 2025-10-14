@@ -2,14 +2,13 @@ package com.foodapp.restaurant.service.impl;
 
 import com.foodapp.restaurant.document.ARMenuDocument;
 import com.foodapp.restaurant.document.VirtualTourDocument;
-import com.foodapp.restaurant.repository.ARMenuRepository;
-import com.foodapp.restaurant.repository.MenuItemRepository;
-import com.foodapp.restaurant.repository.RestaurantRepository;
-import com.foodapp.restaurant.repository.VirtualTourRepository;
+import com.foodapp.restaurant.repository.jpa.ARMenuRepository;
+import com.foodapp.restaurant.repository.jpa.MenuItemRepository;
+import com.foodapp.restaurant.repository.jpa.RestaurantRepository;
+import com.foodapp.restaurant.repository.jpa.VirtualTourRepository;
 import com.foodapp.restaurant.repository.mongo.ARMenuMongoRepository;
 import com.foodapp.restaurant.repository.mongo.VirtualTourMongoRepository;
 import com.foodapp.restaurant.service.RestaurantService;
-import com.foodapp.restaurant.model.MenuItem;
 import com.foodapp.restaurant.model.Restaurant;
 import com.foodapp.restaurant.model.ARMenu;
 import com.foodapp.restaurant.model.VirtualTour;
@@ -18,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
