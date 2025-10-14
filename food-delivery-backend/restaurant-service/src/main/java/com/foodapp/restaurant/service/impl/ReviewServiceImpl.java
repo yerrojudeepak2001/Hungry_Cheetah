@@ -1,8 +1,8 @@
 package com.foodapp.restaurant.service.impl;
 
 import com.foodapp.restaurant.document.ReviewDocument;
-import com.foodapp.restaurant.repository.RestaurantRepository;
-import com.foodapp.restaurant.repository.ReviewRepository;
+import com.foodapp.restaurant.repository.jpa.RestaurantRepository;
+import com.foodapp.restaurant.repository.jpa.ReviewRepository;
 import com.foodapp.restaurant.repository.mongo.ReviewMongoRepository;
 import com.foodapp.restaurant.service.ReviewService;
 import com.foodapp.restaurant.model.Restaurant;

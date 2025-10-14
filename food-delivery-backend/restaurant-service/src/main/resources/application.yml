@@ -17,7 +17,8 @@ spring:
   # MongoDB Configuration for flexible data (Reviews, AR Menus, Virtual Tours)
   data:
     mongodb:
-      uri: mongodb://localhost:27017/restaurant_service
+      uri: mongodb+srv://foodapp_user:FoodApp123@cluster0.vma43un.mongodb.net/food_delivery?retryWrites=true&w=majority&appName=Cluster0
+
       # Alternative configuration:
       # host: localhost
       # port: 27017

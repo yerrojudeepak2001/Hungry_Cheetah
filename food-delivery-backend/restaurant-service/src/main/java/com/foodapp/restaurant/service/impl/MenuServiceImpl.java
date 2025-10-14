@@ -1,8 +1,8 @@
 package com.foodapp.restaurant.service.impl;
 
-import com.foodapp.restaurant.repository.MenuItemRepository;
-import com.foodapp.restaurant.repository.RestaurantRepository;
-import com.foodapp.restaurant.repository.SpecialMenuRepository;
+import com.foodapp.restaurant.repository.jpa.MenuItemRepository;
+import com.foodapp.restaurant.repository.jpa.RestaurantRepository;
+import com.foodapp.restaurant.repository.jpa.SpecialMenuRepository;
 import com.foodapp.restaurant.service.MenuService;
 import com.foodapp.restaurant.model.MenuItem;
 import com.foodapp.restaurant.model.Restaurant;

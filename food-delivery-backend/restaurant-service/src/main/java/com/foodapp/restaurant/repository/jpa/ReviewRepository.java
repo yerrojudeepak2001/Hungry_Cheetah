@@ -1,4 +1,4 @@
-package com.foodapp.restaurant.repository;
+package com.foodapp.restaurant.repository.jpa;
 
 import com.foodapp.restaurant.model.Review;
 import org.springframework.data.domain.Page;
