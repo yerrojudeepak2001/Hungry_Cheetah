@@ -2,10 +2,15 @@ package com.foodapp.payment.controller;
 
 import com.foodapp.common.dto.ApiResponse;
 import com.foodapp.payment.model.Payment;
+import com.foodapp.payment.model.PaymentMethod;
 import com.foodapp.payment.model.Refund;
 import com.foodapp.payment.model.Subscription;
+import com.foodapp.payment.service.PaymentService;
+import com.foodapp.payment.service.RefundService;
+import com.foodapp.payment.service.SubscriptionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/payments")
@@ -24,8 +29,8 @@ public class PaymentController {
 
     // Payment Processing
     @PostMapping("/process")
-    public ResponseEntity<ApiResponse<?>> processPayment(@RequestBody Payment payment) {
-        var processedPayment = paymentService.processPayment(payment);
+    public ResponseEntity<ApiResponse<?>> processPayment(@RequestBody com.foodapp.payment.dto.PaymentRequest paymentRequest) {
+        var processedPayment = paymentService.processPayment(paymentRequest);
         return ResponseEntity.ok(new ApiResponse<>(true, "Payment processed successfully", processedPayment));
     }
 
@@ -46,8 +51,8 @@ public class PaymentController {
 
     // Refunds
     @PostMapping("/refunds")
-    public ResponseEntity<ApiResponse<?>> processRefund(@RequestBody Refund refund) {
-        var processedRefund = refundService.processRefund(refund);
+    public ResponseEntity<ApiResponse<?>> processRefund(@RequestBody com.foodapp.payment.dto.RefundRequest refundRequest) {
+        var processedRefund = refundService.processRefund(refundRequest);
         return ResponseEntity.ok(new ApiResponse<>(true, "Refund processed successfully", processedRefund));
     }
 
@@ -80,7 +85,7 @@ public class PaymentController {
 
     @DeleteMapping("/subscriptions/{subscriptionId}")
     public ResponseEntity<ApiResponse<?>> cancelSubscription(@PathVariable String subscriptionId) {
-        subscriptionService.cancelSubscription(subscriptionId);
+        subscriptionService.cancelSubscription(Long.parseLong(subscriptionId));
         return ResponseEntity.ok(new ApiResponse<>(true, "Subscription cancelled successfully", null));
     }
 

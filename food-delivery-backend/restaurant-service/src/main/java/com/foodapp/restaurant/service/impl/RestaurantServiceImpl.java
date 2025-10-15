@@ -61,12 +61,12 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public List<Restaurant> searchRestaurants(String searchTerm) {
-        return restaurantRepository.findByNameContainingIgnoreCaseOrCuisineContainingIgnoreCase(searchTerm, searchTerm);
+        return restaurantRepository.findByNameContainingIgnoreCaseOrCuisineTypeContainingIgnoreCase(searchTerm, searchTerm);
     }
 
     @Override
     public List<Restaurant> getRestaurantsByCuisine(String cuisine) {
-        return restaurantRepository.findByCuisineContainingIgnoreCase(cuisine);
+        return restaurantRepository.findByCuisineTypeContainingIgnoreCase(cuisine);
     }
 
     @Override

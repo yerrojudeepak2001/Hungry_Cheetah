@@ -1,7 +1,11 @@
 package com.foodapp.payment.service;
 
 import com.foodapp.common.constants.AppConstants;
+import com.foodapp.payment.model.Payment;
 import com.foodapp.payment.model.PaymentTransaction;
+import com.foodapp.payment.repository.PaymentRepository;
+import com.foodapp.payment.repository.PaymentTransactionRepository;
+import com.foodapp.payment.dto.*;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,10 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class PaymentService {
     private final JmsTemplate jmsTemplate;
     private final PaymentRepository paymentRepository;
+    private final PaymentTransactionRepository paymentTransactionRepository;
 
-    public PaymentService(JmsTemplate jmsTemplate, PaymentRepository paymentRepository) {
+    public PaymentService(JmsTemplate jmsTemplate, PaymentRepository paymentRepository, PaymentTransactionRepository paymentTransactionRepository) {
         this.jmsTemplate = jmsTemplate;
         this.paymentRepository = paymentRepository;
+        this.paymentTransactionRepository = paymentTransactionRepository;
     }
 
     @Transactional
@@ -32,7 +38,7 @@ public class PaymentService {
         transaction.setStatus(gatewayResponse.getStatus());
         transaction.setTransactionId(gatewayResponse.getTransactionId());
 
-        paymentRepository.save(transaction);
+        paymentTransactionRepository.save(transaction);
 
         // If payment successful, notify other services
         if (gatewayResponse.isSuccessful()) {
@@ -45,7 +51,7 @@ public class PaymentService {
     @Transactional
     public PaymentTransaction processRefund(RefundRequest request) {
         // Validate refund request
-        PaymentTransaction originalTransaction = paymentRepository.findById(request.getTransactionId())
+        PaymentTransaction originalTransaction = paymentTransactionRepository.findById(request.getTransactionId())
             .orElseThrow(() -> new RuntimeException("Transaction not found"));
 
         // Process refund with payment gateway
@@ -59,7 +65,7 @@ public class PaymentService {
         refundTransaction.setReferenceTransactionId(originalTransaction.getId());
         refundTransaction.setStatus(refundResponse.getStatus());
 
-        paymentRepository.save(refundTransaction);
+        paymentTransactionRepository.save(refundTransaction);
 
         return refundTransaction;
     }
@@ -76,5 +82,38 @@ public class PaymentService {
     private RefundResponse processRefundWithGateway(PaymentTransaction originalTransaction, RefundRequest request) {
         // Implement refund processing logic
         return null;
+    }
+    
+    public String getPaymentStatus(String paymentId) {
+        // Get payment status logic here
+        return "COMPLETED";
+    }
+    
+    public java.util.List<com.foodapp.payment.dto.PaymentResponse> processSplitPayment(java.util.List<Payment> payments, String groupOrderId) {
+        // Process split payment logic here
+        return payments.stream()
+                .map(payment -> {
+                    PaymentResponse response = new PaymentResponse();
+                    response.setPaymentId("PAY_" + System.currentTimeMillis());
+                    response.setStatus("SUCCESS");
+                    response.setMessage("Split payment processed successfully");
+                    return response;
+                })
+                .toList();
+    }
+    
+    public com.foodapp.payment.model.PaymentMethod addPaymentMethod(Long userId, com.foodapp.payment.model.PaymentMethod paymentMethod) {
+        // Add payment method logic here
+        paymentMethod.setUserId(userId);
+        return paymentMethod;
+    }
+    
+    public java.util.List<com.foodapp.payment.model.PaymentMethod> getUserPaymentMethods(Long userId) {
+        // Get user payment methods logic here
+        return java.util.List.of();
+    }
+    
+    public void removePaymentMethod(Long userId, String methodId) {
+        // Remove payment method logic here
     }
 }
