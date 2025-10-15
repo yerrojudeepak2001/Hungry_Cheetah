@@ -8,6 +8,7 @@ import com.foodapp.order.model.MultiRestaurantOrder;
 import com.foodapp.order.service.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 import java.util.List;
 
 @RestController
@@ -30,15 +31,26 @@ public class OrderController {
 
     // Regular Orders
     @PostMapping
-    public ResponseEntity<ApiResponse<?>> createOrder(@RequestBody OrderDTO orderDTO) {
+    public ResponseEntity<ApiResponse<?>> createOrder(@RequestBody OrderDTO orderDTO, Authentication authentication) {
+        // Get user ID from authentication
+        String userId = authentication.getName();
+        orderDTO.setUserId(Long.parseLong(userId));
+        
         var order = orderService.createOrder(orderDTO);
         return ResponseEntity.ok(new ApiResponse<>(true, "Order created successfully", order));
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<ApiResponse<?>> getOrder(@PathVariable Long orderId) {
+    public ResponseEntity<ApiResponse<?>> getOrder(@PathVariable Long orderId, Authentication authentication) {
         var order = orderService.getOrderStatus(orderId);
         return ResponseEntity.ok(new ApiResponse<>(true, "Order fetched successfully", order));
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<ApiResponse<?>> getUserOrders(Authentication authentication) {
+        String userId = authentication.getName();
+        var orders = orderService.getUserOrders(Long.parseLong(userId));
+        return ResponseEntity.ok(new ApiResponse<>(true, "User orders fetched successfully", orders));
     }
 
     @PutMapping("/{orderId}/status")

@@ -45,4 +45,11 @@ public class OrderService {
         order.setOrderStatus(status);
         orderRepository.save(order);
     }
+    
+    public java.util.List<OrderDTO> getUserOrders(Long userId) {
+        java.util.List<Order> orders = orderRepository.findByUserId(userId);
+        return orders.stream()
+                .map(orderMapper::toDTO)
+                .collect(java.util.stream.Collectors.toList());
+    }
 }

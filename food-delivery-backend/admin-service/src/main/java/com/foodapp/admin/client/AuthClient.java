@@ -9,7 +9,7 @@ import com.foodapp.admin.dto.AuthValidationResponse;
 
 @FeignClient(
     name = "auth-service",
-    url = "${services.auth-service.url:http://localhost:8081}",
+    url = "${services.auth-service.url:http://localhost:8080}",
     fallback = AuthClientFallback.class
 )
 public interface AuthClient {
