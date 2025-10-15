@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -23,6 +25,8 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .httpBasic(httpBasic -> httpBasic.disable())
+            .formLogin(formLogin -> formLogin.disable())
             .authorizeHttpRequests(authz -> authz
                 // Public endpoints - no authentication required
                 .requestMatchers(
@@ -36,10 +40,10 @@ public class SecurityConfig {
                     "/swagger-ui/**",                // Swagger UI
                     "/swagger-ui.html"               // Swagger UI HTML
                 ).permitAll()
-                // Restaurant management - Admin only
+                // Restaurant management - Owner or Admin
                 .requestMatchers(
                     "POST", "/api/restaurants"       // Register restaurant
-                ).hasRole("ADMIN")
+                ).hasAnyRole("ADMIN", "RESTAURANT_OWNER")
                 // Restaurant operations - Owner or Admin
                 .requestMatchers(
                     "PUT", "/api/restaurants/{id}",  // Update restaurant
@@ -55,5 +59,11 @@ public class SecurityConfig {
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        // Empty user details service to prevent default user creation
+        return new InMemoryUserDetailsManager();
     }
 }
