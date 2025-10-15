@@ -1,11 +1,12 @@
 package com.foodapp.delivery.model;
 
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+
 
 @Data
 @Entity

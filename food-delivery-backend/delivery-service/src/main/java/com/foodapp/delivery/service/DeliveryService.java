@@ -2,6 +2,7 @@ package com.foodapp.delivery.service;
 
 import com.foodapp.delivery.model.Delivery;
 import com.foodapp.delivery.model.DeliveryPartner;
+import com.foodapp.delivery.model.DeliveryStatus;
 import com.foodapp.delivery.repository.DeliveryRepository;
 import com.foodapp.delivery.repository.DeliveryPartnerRepository;
 import com.foodapp.common.exception.ResourceNotFoundException;
@@ -49,7 +50,7 @@ public class DeliveryService {
         // Send notifications
         notificationService.notifyPartner(partner.getId(), savedDelivery);
         notificationService.notifyCustomer(savedDelivery.getOrderId(), "Delivery assigned");
-        
+
         return savedDelivery;
     }
 
