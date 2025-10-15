@@ -1,6 +1,9 @@
+com\foodapp\gateway\filters\JwtAuthenticationFilter.class
 com\foodapp\gateway\client\ServiceHealthClientFallback.class
 com\foodapp\gateway\ApiGatewayApplication.class
 com\foodapp\gateway\filters\CorsFilter$Config.class
+com\foodapp\gateway\filters\JwtAuthenticationFilter$Config.class
 com\foodapp\gateway\dto\ServiceHealth.class
 com\foodapp\gateway\client\ServiceHealthClient.class
+com\foodapp\gateway\config\RouterConfig.class
 com\foodapp\gateway\filters\CorsFilter.class
