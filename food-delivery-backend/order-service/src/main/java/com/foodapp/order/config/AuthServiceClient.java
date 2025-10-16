@@ -8,5 +8,5 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface AuthServiceClient {
     
     @PostMapping("/api/auth/validate-token")
-    UserAuthInfo validateToken(@RequestParam("token") String token);
+    ApiResponse<TokenValidationResponse> validateToken(@RequestParam("token") String token);
 }

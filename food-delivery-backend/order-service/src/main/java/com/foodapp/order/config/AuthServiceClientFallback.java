@@ -8,8 +8,11 @@ import java.util.Collections;
 public class AuthServiceClientFallback implements AuthServiceClient {
     
     @Override
-    public UserAuthInfo validateToken(String token) {
-        // Return invalid user info when auth service is down
-        return new UserAuthInfo(null, null, Collections.emptyList(), false, null);
+    public ApiResponse<TokenValidationResponse> validateToken(String token) {
+        // Return invalid token response when auth service is down
+        TokenValidationResponse invalidResponse = new TokenValidationResponse();
+        invalidResponse.setValid(false);
+        invalidResponse.setRoles(Collections.emptySet());
+        return new ApiResponse<>(false, "Auth service unavailable", invalidResponse);
     }
 }

@@ -13,7 +13,7 @@ public class OrderDTO {
     private List<OrderItemDTO> items;
     private BigDecimal totalAmount;
     private String orderStatus;
-    private String deliveryAddress;
+    private DeliveryAddressDTO deliveryAddress;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

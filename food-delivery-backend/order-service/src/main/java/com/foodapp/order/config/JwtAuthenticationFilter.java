@@ -32,11 +32,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             
             try {
                 // Validate token with auth-service
-                UserAuthInfo userInfo = authServiceClient.validateToken(token);
+                ApiResponse<TokenValidationResponse> authResponse = authServiceClient.validateToken(token);
                 
-                if (userInfo != null && userInfo.isValid()) {
+                if (authResponse != null && authResponse.isSuccess() && authResponse.getData() != null && authResponse.getData().isValid()) {
+                    TokenValidationResponse userInfo = authResponse.getData();
                     // Create authorities from user roles
-                    List<SimpleGrantedAuthority> authorities = userInfo.getRoles().stream()
+                    List<SimpleGrantedAuthority> authorities = userInfo.getRolesList().stream()
                             .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                             .collect(Collectors.toList());
                     

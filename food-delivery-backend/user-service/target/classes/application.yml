@@ -91,6 +91,9 @@ management:
   endpoint:
     health:
       show-details: always
+  health:
+    jms:
+      enabled: false
   metrics:
     export:
       prometheus:

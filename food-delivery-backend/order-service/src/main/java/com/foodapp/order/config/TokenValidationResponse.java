@@ -1,6 +1,8 @@
-package com.foodapp.auth.dto;
+package com.foodapp.order.config;
 
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 
 public class TokenValidationResponse {
     private String username;
@@ -12,12 +14,12 @@ public class TokenValidationResponse {
     public TokenValidationResponse() {
     }
 
-    public TokenValidationResponse(String username, String email, Set<String> roles, String userId) {
+    public TokenValidationResponse(String username, String email, Set<String> roles, String userId, boolean valid) {
         this.username = username;
         this.email = email;
         this.roles = roles;
         this.userId = userId;
-        this.valid = true; // Token is valid if object is created
+        this.valid = valid;
     }
 
     public String getUsername() {
@@ -58,5 +60,10 @@ public class TokenValidationResponse {
 
     public void setValid(boolean valid) {
         this.valid = valid;
+    }
+
+    // Helper method to convert Set<String> to List<String> for compatibility
+    public List<String> getRolesList() {
+        return roles != null ? new ArrayList<>(roles) : new ArrayList<>();
     }
 }

@@ -43,11 +43,16 @@ public class AuthController {
     }
     
     @PostMapping("/validate-token")
-    public ResponseEntity<?> validateToken(@RequestBody String token) {
-        if (authService.validateToken(token)) {
-            return ResponseEntity.ok().build();
+    public ResponseEntity<ApiResponse<TokenValidationResponse>> validateToken(@RequestParam("token") String token) {
+        try {
+            TokenValidationResponse userInfo = authService.getUserInfo(token);
+            return ResponseEntity.ok(new ApiResponse<>(true, "Token validation successful", userInfo));
+        } catch (Exception e) {
+            // Return an invalid token response instead of empty body
+            TokenValidationResponse invalidResponse = new TokenValidationResponse();
+            invalidResponse.setValid(false);
+            return ResponseEntity.status(401).body(new ApiResponse<>(false, "Token validation failed", invalidResponse));
         }
-        return ResponseEntity.status(401).build();
     }
     
     @GetMapping("/userinfo")

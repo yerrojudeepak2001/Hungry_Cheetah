@@ -55,7 +55,17 @@ Authorization: Bearer <your_jwt_token>
     }
   ],
   "totalAmount": 34.48,
-  "deliveryAddress": "123 Main St, City, State 12345"
+  "deliveryAddress": {
+    "streetAddress": "123 Main St",
+    "apartmentNumber": "Apt 4B",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "postalCode": "10001",
+    "landmark": "Near Central Park",
+    "latitude": 40.7128,
+    "longitude": -74.0060
+  }
 }
 ```
 
@@ -71,7 +81,17 @@ Authorization: Bearer <your_jwt_token>
     "items": [...],
     "totalAmount": 34.48,
     "orderStatus": "PENDING",
-    "deliveryAddress": "123 Main St, City, State 12345",
+    "deliveryAddress": {
+      "streetAddress": "123 Main St",
+      "apartmentNumber": "Apt 4B",
+      "city": "New York",
+      "state": "NY",
+      "country": "USA",
+      "postalCode": "10001",
+      "landmark": "Near Central Park",
+      "latitude": 40.7128,
+      "longitude": -74.0060
+    },
     "createdAt": "2025-10-16T12:30:00",
     "updatedAt": "2025-10-16T12:30:00"
   }
