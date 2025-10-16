@@ -3,6 +3,9 @@ package com.foodapp.search.client;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import com.foodapp.search.dto.MenuIndexData;
+import com.foodapp.search.client.fallback.MenuClientFallback;
+import java.util.List;
+import java.time.LocalDateTime;
 
 @FeignClient(name = "MENU-SERVICE", fallback = MenuClientFallback.class)
 public interface MenuClient {

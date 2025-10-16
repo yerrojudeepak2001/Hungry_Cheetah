@@ -2,7 +2,9 @@ package com.foodapp.driver.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
-import com.foodapp.driver.dto.UserProfile;
+import com.foodapp.driver.dto.*;
+import com.foodapp.driver.client.fallback.UserClientFallback;
+import java.util.List;
 
 @FeignClient(name = "USER-SERVICE", fallback = UserClientFallback.class)
 public interface UserClient {

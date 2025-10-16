@@ -2,8 +2,13 @@ package com.foodapp.search.controller;
 
 import com.foodapp.common.dto.ApiResponse;
 import com.foodapp.search.model.*;
+import com.foodapp.search.dto.*;
+import com.foodapp.search.service.SearchService;
+import com.foodapp.search.service.RecommendationService;
+import com.foodapp.search.service.FilterService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/search")

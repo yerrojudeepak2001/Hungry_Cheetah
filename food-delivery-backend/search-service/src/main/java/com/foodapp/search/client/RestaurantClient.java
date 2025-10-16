@@ -3,6 +3,8 @@ package com.foodapp.search.client;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import com.foodapp.search.dto.RestaurantSearchData;
+import com.foodapp.search.dto.MenuItemSearchData;
+import com.foodapp.search.client.fallback.RestaurantClientFallback;
 import java.util.List;
 
 @FeignClient(name = "RESTAURANT-SERVICE", fallback = RestaurantClientFallback.class)

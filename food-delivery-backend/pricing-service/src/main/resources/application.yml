@@ -5,14 +5,18 @@ spring:
   application:
     name: pricing-service
   datasource:
-    url: jdbc:mysql://localhost:3306/foodapp_pricing?createDatabaseIfNotExist=true&useSSL=false
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:root}
+    url: jdbc:mysql://100.122.144.43:3306/food_app?createDatabaseIfNotExist=true&useSSL=false
+    username: teamuser
+    password: team123
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
   kafka:
     bootstrap-servers: localhost:9092
     consumer:

@@ -99,6 +99,64 @@ public class UserService {
         emailService.sendPasswordResetEmail(user.getEmail(), "Your password was changed");
     }
 
+    @Transactional
+    public User authenticateUser(String email, String password, String deviceToken, String deviceInfo) {
+        // Find user by email
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+
+        // Check if account is enabled and not locked
+        if (!user.getIsEnabled()) {
+            throw new IllegalArgumentException("Account is disabled");
+        }
+        
+        if (!user.getAccountNonLocked()) {
+            throw new IllegalArgumentException("Account is locked");
+        }
+
+        // Verify password
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("Invalid credentials");
+        }
+
+        // Update last login time and device token
+        user.setLastLogin(LocalDateTime.now());
+        if (deviceToken != null && !deviceToken.trim().isEmpty()) {
+            user.setDeviceToken(deviceToken);
+        }
+        
+        User savedUser = userRepository.save(user);
+
+        // Send login alert email (optional)
+        try {
+            emailService.sendLoginAlertEmail(user.getEmail(), deviceInfo, LocalDateTime.now());
+        } catch (Exception e) {
+            // Log the error but don't fail the login
+            System.err.println("Failed to send login alert email: " + e.getMessage());
+        }
+
+        return savedUser;
+    }
+
+    // Helper method for finding user by email (useful for login and forgot password)
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+    }
+
+    @Transactional
+    public void updateLastLogin(Long userId) {
+        User user = getUser(userId);
+        user.setLastLogin(LocalDateTime.now());
+        userRepository.save(user);
+    }
+
+    @Transactional 
+    public void clearDeviceToken(Long userId) {
+        User user = getUser(userId);
+        user.setDeviceToken(null);
+        userRepository.save(user);
+    }
+
     // ------------------- Utilities -------------------
     private void validateUniqueFields(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {

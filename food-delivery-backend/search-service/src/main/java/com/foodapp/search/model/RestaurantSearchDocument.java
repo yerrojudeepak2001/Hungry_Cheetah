@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
-import javax.persistence.Id;
+import org.springframework.data.annotation.Id;
 import java.util.List;
 import java.util.Map;
 

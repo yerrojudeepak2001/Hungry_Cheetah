@@ -3,8 +3,13 @@ package com.foodapp.user.controller;
 import com.foodapp.common.dto.ApiResponse;
 import com.foodapp.user.model.User;
 import com.foodapp.user.service.UserService;
+import com.foodapp.user.dto.LoginRequest;
+import com.foodapp.user.dto.LoginResponse;
+import com.foodapp.user.dto.ForgotPasswordRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/users")
@@ -21,6 +26,80 @@ public class UserController {
     public ResponseEntity<ApiResponse<?>> registerUser(@RequestBody User user) {
         var registeredUser = userService.registerUser(user);
         return ResponseEntity.ok(new ApiResponse<>(true, "User registered successfully", registeredUser));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<?>> loginUser(@Valid @RequestBody LoginRequest loginRequest) {
+        try {
+            // Authenticate user
+            User authenticatedUser = userService.authenticateUser(
+                loginRequest.getEmail(), 
+                loginRequest.getPassword(),
+                loginRequest.getDeviceToken(),
+                loginRequest.getDeviceInfo()
+            );
+
+            // Build login response
+            LoginResponse loginResponse = LoginResponse.builder()
+                .userId(authenticatedUser.getId())
+                .username(authenticatedUser.getUsername())
+                .email(authenticatedUser.getEmail())
+                .firstName(authenticatedUser.getFirstName())
+                .lastName(authenticatedUser.getLastName())
+                .phone(authenticatedUser.getPhone())
+                .roles(authenticatedUser.getRoles())
+                .loginTime(LocalDateTime.now())
+                .isEmailVerified(authenticatedUser.getIsEmailVerified() != null ? authenticatedUser.getIsEmailVerified() : false)
+                .isPhoneVerified(authenticatedUser.getIsPhoneVerified() != null ? authenticatedUser.getIsPhoneVerified() : false)
+                .profilePicture(authenticatedUser.getProfilePicture())
+                .message("Login successful")
+                .build();
+
+            return ResponseEntity.ok(new ApiResponse<>(true, "Login successful", loginResponse));
+            
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest()
+                .body(new ApiResponse<>(false, e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                .body(new ApiResponse<>(false, "Login failed: " + e.getMessage(), null));
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<?>> logoutUser(@RequestParam Long userId) {
+        try {
+            // Clear device token for the user (optional)
+            User user = userService.getUser(userId);
+            user.setDeviceToken(null);
+            userService.updateUser(userId, user);
+            
+            return ResponseEntity.ok(new ApiResponse<>(true, "Logout successful", null));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                .body(new ApiResponse<>(false, "Logout failed: " + e.getMessage(), null));
+        }
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ApiResponse<?>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        try {
+            User user = userService.findByEmail(request.getEmail());
+            if (user != null) {
+                // For security, always return success even if email doesn't exist
+                // This prevents email enumeration attacks
+                // In a real implementation, you would generate a reset token and send it via email
+                return ResponseEntity.ok(new ApiResponse<>(true, 
+                    "If the email exists in our system, you will receive a password reset link", null));
+            } else {
+                // Still return success for security
+                return ResponseEntity.ok(new ApiResponse<>(true, 
+                    "If the email exists in our system, you will receive a password reset link", null));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.ok(new ApiResponse<>(true, 
+                "If the email exists in our system, you will receive a password reset link", null));
+        }
     }
 
     @GetMapping("/{userId}")

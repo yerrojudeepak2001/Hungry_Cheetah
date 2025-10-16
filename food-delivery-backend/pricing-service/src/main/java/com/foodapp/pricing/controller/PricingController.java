@@ -1,9 +1,14 @@
 package com.foodapp.pricing.controller;
 
 import com.foodapp.common.dto.ApiResponse;
-import com.foodapp.pricing.model.*;
+import com.foodapp.pricing.service.PricingService;
+import com.foodapp.pricing.service.DynamicPricingService;
+import com.foodapp.pricing.service.DiscountService;
+import com.foodapp.pricing.dto.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/pricing")
@@ -20,101 +25,51 @@ public class PricingController {
         this.discountService = discountService;
     }
 
-    // Base Pricing
     @PostMapping("/calculate")
-    public ResponseEntity<ApiResponse<?>> calculatePrice(@RequestBody PriceCalculationRequest request) {
-        var price = pricingService.calculatePrice(request);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Price calculated successfully", price));
+    public ResponseEntity<ApiResponse<Map<String, Object>>> calculatePrice(
+            @RequestBody PriceCalculationRequest request) {
+        var pricing = pricingService.calculatePrice(request);
+        ApiResponse<Map<String, Object>> response = new ApiResponse<>(true, "Pricing calculated successfully", pricing);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/delivery-fee")
-    public ResponseEntity<ApiResponse<?>> calculateDeliveryFee(
-            @RequestParam double distance,
-            @RequestParam(required = false) String timeSlot) {
-        var fee = pricingService.calculateDeliveryFee(distance, timeSlot);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Delivery fee calculated successfully", fee));
+    public ResponseEntity<ApiResponse<String>> getDeliveryFee(
+            @RequestParam String area, @RequestParam String timeSlot) {
+        var fee = pricingService.getDeliveryFee(area, timeSlot);
+        ApiResponse<String> response = new ApiResponse<>(true, "Delivery fee calculated", fee.toString());
+        return ResponseEntity.ok(response);
     }
 
-    // Dynamic Pricing
-    @PostMapping("/dynamic/update")
-    public ResponseEntity<ApiResponse<?>> updateDynamicPricing(@RequestBody DynamicPricingConfig config) {
-        var updated = dynamicPricingService.updatePricing(config);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Dynamic pricing updated successfully", updated));
+    @GetMapping("/dynamic-config/{area}")
+    public ResponseEntity<ApiResponse<DynamicPricingConfig>> getDynamicConfig(
+            @PathVariable String area) {
+        var config = dynamicPricingService.getCurrentPricingConfig(area);
+        ApiResponse<DynamicPricingConfig> response = new ApiResponse<>(true, "Dynamic pricing config retrieved", config);
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/dynamic/current")
-    public ResponseEntity<ApiResponse<?>> getCurrentPricingFactors(
-            @RequestParam String region,
-            @RequestParam(required = false) String category) {
-        var factors = dynamicPricingService.getCurrentFactors(region, category);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Current pricing factors fetched successfully", factors));
+    @GetMapping("/discounts/{customerId}")
+    public ResponseEntity<ApiResponse<List<Discount>>> getAvailableDiscounts(
+            @PathVariable String customerId) {
+        var discounts = discountService.getAvailableDiscounts(customerId);
+        ApiResponse<List<Discount>> response = new ApiResponse<>(true, "Available discounts retrieved", discounts);
+        return ResponseEntity.ok(response);
     }
 
-    // Discounts
-    @PostMapping("/discounts")
-    public ResponseEntity<ApiResponse<?>> createDiscount(@RequestBody Discount discount) {
-        var created = discountService.createDiscount(discount);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Discount created successfully", created));
+    @GetMapping("/offers/{area}")
+    public ResponseEntity<ApiResponse<List<SpecialOffer>>> getActiveOffers(
+            @PathVariable String area) {
+        var offers = discountService.getActiveOffers(area);
+        ApiResponse<List<SpecialOffer>> response = new ApiResponse<>(true, "Active offers retrieved", offers);
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/discounts/applicable")
-    public ResponseEntity<ApiResponse<?>> getApplicableDiscounts(
-            @RequestParam Long userId,
-            @RequestParam(required = false) String category) {
-        var discounts = discountService.getApplicableDiscounts(userId, category);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Applicable discounts fetched successfully", discounts));
-    }
-
-    // Special Pricing
-    @PostMapping("/special-offers")
-    public ResponseEntity<ApiResponse<?>> createSpecialOffer(@RequestBody SpecialOffer offer) {
-        var created = pricingService.createSpecialOffer(offer);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Special offer created successfully", created));
-    }
-
-    @GetMapping("/special-offers/active")
-    public ResponseEntity<ApiResponse<?>> getActiveSpecialOffers() {
-        var offers = pricingService.getActiveSpecialOffers();
-        return ResponseEntity.ok(new ApiResponse<>(true, "Active special offers fetched successfully", offers));
-    }
-
-    // Surge Pricing
-    @PostMapping("/surge/configure")
-    public ResponseEntity<ApiResponse<?>> configureSurgePricing(@RequestBody SurgePricingConfig config) {
-        var configured = dynamicPricingService.configureSurge(config);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Surge pricing configured successfully", configured));
-    }
-
-    @GetMapping("/surge/status")
-    public ResponseEntity<ApiResponse<?>> getSurgeStatus(
-            @RequestParam String region,
-            @RequestParam String timeSlot) {
-        var status = dynamicPricingService.getSurgeStatus(region, timeSlot);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Surge status fetched successfully", status));
-    }
-
-    // Bulk Pricing
-    @PostMapping("/bulk/calculate")
-    public ResponseEntity<ApiResponse<?>> calculateBulkPricing(@RequestBody BulkPricingRequest request) {
-        var pricing = pricingService.calculateBulkPricing(request);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Bulk pricing calculated successfully", pricing));
-    }
-
-    // Price History
-    @GetMapping("/history/{itemId}")
-    public ResponseEntity<ApiResponse<?>> getPriceHistory(
-            @PathVariable String itemId,
-            @RequestParam String timeFrame) {
-        var history = pricingService.getPriceHistory(itemId, timeFrame);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Price history fetched successfully", history));
-    }
-
-    // Pricing Analytics
-    @GetMapping("/analytics")
-    public ResponseEntity<ApiResponse<?>> getPricingAnalytics(
-            @RequestParam String timeFrame,
-            @RequestParam(required = false) String category) {
-        var analytics = pricingService.getPricingAnalytics(timeFrame, category);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Pricing analytics fetched successfully", analytics));
+    @PostMapping("/validate-promo")
+    public ResponseEntity<ApiResponse<Boolean>> validatePromoCode(
+            @RequestParam String promoCode, @RequestParam String customerId) {
+        var isValid = discountService.validatePromoCode(promoCode, customerId);
+        ApiResponse<Boolean> response = new ApiResponse<>(true, "Promo code validation completed", isValid);
+        return ResponseEntity.ok(response);
     }
 }
