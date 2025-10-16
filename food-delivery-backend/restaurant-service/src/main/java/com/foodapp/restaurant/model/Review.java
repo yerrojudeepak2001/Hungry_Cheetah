@@ -1,5 +1,6 @@
 package com.foodapp.restaurant.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -29,5 +30,6 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
     @JsonIgnore
+    @JsonBackReference(value = "restaurant-review")
     private Restaurant restaurant;
 }

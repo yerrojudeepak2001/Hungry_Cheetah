@@ -1,5 +1,6 @@
 package com.foodapp.restaurant.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.List;
@@ -22,6 +23,7 @@ public class Restaurant {
     private Boolean isActive;
     
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<MenuItem> menu;
 
     @Column(name = "opening_hours")
