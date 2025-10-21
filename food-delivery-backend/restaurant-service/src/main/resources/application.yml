@@ -30,6 +30,31 @@ spring:
     loadbalancer:
       ribbon:
         enabled: false
+  
+  # Email Configuration
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: hungrycheetah62@gmail.com
+    password: feat seix sqbb lvhz
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            trust: smtp.gmail.com
+  
+  # ActiveMQ Configuration
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: admin
+    password: admin
+    pool:
+      enabled: true
+      max-connections: 50
 
 eureka:
   client:

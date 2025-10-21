@@ -5,18 +5,38 @@ spring:
   application:
     name: notification-service
   datasource:
-    url: jdbc:mysql://localhost:3306/foodapp_notifications?createDatabaseIfNotExist=true&useSSL=false
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:root}
+    url: jdbc:mysql://100.122.144.43:3306/food_app?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: teamuser
+    password: password123
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+    database-platform: org.hibernate.dialect.MySQLDialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
       group-id: notification-service-group
+  
+  # Email Configuration
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: hungrycheetah62@gmail.com
+    password: feat seix sqbb lvhz
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            trust: smtp.gmail.com
 
 
 notification:
@@ -24,20 +44,20 @@ notification:
     email:
       enabled: true
       smtp:
-        host: ${SMTP_HOST}
-        port: ${SMTP_PORT}
-        username: ${SMTP_USERNAME}
-        password: ${SMTP_PASSWORD}
+        host: smtp.gmail.com
+        port: 587
+        username: hungrycheetah62@gmail.com
+        password: feat seix sqbb lvhz
     sms:
       enabled: true
       twilio:
-        account-sid: ${TWILIO_ACCOUNT_SID}
-        auth-token: ${TWILIO_AUTH_TOKEN}
-        phone-number: ${TWILIO_PHONE_NUMBER}
+        account-sid: ${TWILIO_ACCOUNT_SID:}
+        auth-token: ${TWILIO_AUTH_TOKEN:}
+        phone-number: ${TWILIO_PHONE_NUMBER:}
     push:
       enabled: true
       firebase:
-        config-path: ${FIREBASE_CONFIG_PATH}
+        config-path: ${FIREBASE_CONFIG_PATH:}
   templates:
     cache-ttl: 3600 # 1 hour
   retry:

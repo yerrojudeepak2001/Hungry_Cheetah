@@ -21,6 +21,8 @@ public class PaymentTransaction {
     private String status;
     private String type; // PAYMENT, REFUND
     private Long referenceTransactionId; // For refunds
+    private String gatewayTransactionId; // Stripe PaymentIntent ID
+    private String failureReason;
     
     @Column(name = "created_at")
     private LocalDateTime createdAt;

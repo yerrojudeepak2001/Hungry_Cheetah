@@ -2,6 +2,9 @@ package com.foodapp.notification.controller;
 
 import com.foodapp.common.dto.ApiResponse;
 import com.foodapp.notification.model.*;
+import com.foodapp.notification.service.NotificationService;
+import com.foodapp.notification.service.PreferenceService;
+import com.foodapp.notification.service.TemplateService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,78 +1,64 @@
 server:
-  port: 8095
-
+  port: 8091
+  
 spring:
   application:
     name: ai-service
-  datasource:
-    url: jdbc:postgresql://localhost:5432/foodapp_ai
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+  
   data:
     mongodb:
-      uri: mongodb://localhost:27017/foodapp_ai
-  kafka:
-    bootstrap-servers: localhost:9092
-    consumer:
-      group-id: ai-service-group
-
-ai:
-  model:
-    path: ${AI_MODEL_PATH}
-    update-interval: 86400 # 24 hours
-  prediction:
-    batch-size: 100
-    confidence-threshold: 0.75
-  optimization:
-    enabled: true
-    interval: 3600 # 1 hour
-  features:
-    demand-forecasting: true
-    price-optimization: true
-    route-optimization: true
+      database: aiservice_db
+      uri: mongodb://localhost:27017/aiservice_db
+      
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: admin
+    password: admin
+    pool:
+      enabled: true
+      max-connections: 50
+      
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: hungrycheetah62@gmail.com
+    password: feat seix sqbb lvhz
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
 
 eureka:
   client:
-    serviceUrl:
+    service-url:
       defaultZone: http://localhost:8761/eureka/
   instance:
     prefer-ip-address: true
 
-feign:
-  client:
-    config:
-      default:
-        connectTimeout: 5000
-        readTimeout: 5000
-        loggerLevel: full
-  circuitbreaker:
-    enabled: true
+gemini:
+  api:
+    key: AIzaSyAb8RN6JeM3nTi5ipNIjZhzuVExA-bYRshFGCdCN86mS5gfdi2g
+    base-url: https://generativelanguage.googleapis.com/v1beta
+    model: gemini-1.5-flash
+    timeout: 30000
+    max-tokens: 1000
+    temperature: 0.7
 
-resilience4j:
-  circuitbreaker:
-    instances:
-      modelPrediction:
-        minimumNumberOfCalls: 5
-        failureRateThreshold: 50
-  bulkhead:
-    instances:
-      batchPrediction:
-        maxConcurrentCalls: 10
+logging:
+  level:
+    com.foodapp.aiservice: DEBUG
+    org.springframework.web.reactive.function.client: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
 
 management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: health,info,metrics
   endpoint:
     health:
       show-details: always
-
-logging:
-  level:
-    com.foodapp.ai: DEBUG

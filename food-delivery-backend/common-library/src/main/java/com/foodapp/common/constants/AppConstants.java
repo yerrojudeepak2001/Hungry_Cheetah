@@ -8,6 +8,7 @@ public class AppConstants {
     // Queue Constants
     public static final String ORDER_CREATED_QUEUE = "order.created.queue";
     public static final String PAYMENT_SUCCESS_QUEUE = "payment.success.queue";
+    public static final String PAYMENT_FAILURE_QUEUE = "payment.failure.queue";
     public static final String DELIVERY_COMPLETED_QUEUE = "delivery.completed.queue";
     public static final String USER_REGISTERED_QUEUE = "user.registered.queue";
     

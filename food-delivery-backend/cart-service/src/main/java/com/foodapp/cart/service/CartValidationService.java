@@ -1,7 +1,7 @@
 package com.foodapp.cart.service;
 
-import com.foodapp.cart.model.Cart;
-import com.foodapp.cart.model.CartItem;
+import com.foodapp.cart.entity.Cart;
+import com.foodapp.cart.entity.CartItem;
 
 public interface CartValidationService {
     boolean validateCart(Cart cart);

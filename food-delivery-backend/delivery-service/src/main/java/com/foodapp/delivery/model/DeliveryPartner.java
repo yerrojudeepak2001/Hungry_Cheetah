@@ -44,4 +44,13 @@ public class DeliveryPartner {
     private Integer maxSimultaneousDeliveries;
     private Double averageDeliveryTime;
     private Double successRate;
+    
+    // Helper methods for Google Maps integration
+    public Double getCurrentLatitude() {
+        return currentLocation != null ? currentLocation.getLatitude() : null;
+    }
+    
+    public Double getCurrentLongitude() {
+        return currentLocation != null ? currentLocation.getLongitude() : null;
+    }
 }
