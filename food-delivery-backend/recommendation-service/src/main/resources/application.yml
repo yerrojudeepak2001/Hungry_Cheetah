@@ -5,9 +5,9 @@ spring:
   application:
     name: recommendation-service
   datasource:
-    url: jdbc:mysql://localhost:3306/foodapp_recommendations?createDatabaseIfNotExist=true&useSSL=false
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:root}
+    url: jdbc:mysql://100.122.144.43:3306/food_app
+    username: teamuser
+    password: password123
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:

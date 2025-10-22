@@ -23,6 +23,13 @@ spring:
         - payment.success.queue
         - payment.failure.queue
         - payment.notification.queue
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: Deepak
+    password: Deepak123
+    pool:
+      enabled: true
+      max-connections: 50
   # SMTP Configuration
   mail:
     host: smtp.gmail.com

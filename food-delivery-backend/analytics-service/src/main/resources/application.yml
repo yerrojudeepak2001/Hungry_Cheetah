@@ -5,10 +5,10 @@ spring:
   application:
     name: analytics-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/foodapp_analytics
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:mysql://100.122.144.43:3306/food_app
+    username: teamuser
+    password: password123
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -16,10 +16,13 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/foodapp_analytics
-  kafka:
-    bootstrap-servers: localhost:9092
-    consumer:
-      group-id: analytics-service-group
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: Deepak
+    password: Deepak123
+    pool:
+      enabled: true
+      max-connections: 50
   elasticsearch:
     rest:
       uris: http://localhost:9200

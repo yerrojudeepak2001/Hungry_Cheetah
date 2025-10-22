@@ -5,18 +5,21 @@ spring:
   application:
     name: promotion-service
   datasource:
-    url: jdbc:mysql://localhost:3306/foodapp_promotions?createDatabaseIfNotExist=true&useSSL=false
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:root}
+    url: jdbc:mysql://100.122.144.43:3306/food_app
+    username: teamuser
+    password: password123
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-  kafka:
-    bootstrap-servers: localhost:9092
-    consumer:
-      group-id: promotion-service-group
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: Deepak
+    password: Deepak123
+    pool:
+      enabled: true
+      max-connections: 50
 
 
 promotion:

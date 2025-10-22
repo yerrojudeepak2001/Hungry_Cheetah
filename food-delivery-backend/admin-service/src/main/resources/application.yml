@@ -13,10 +13,13 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-  kafka:
-    bootstrap-servers: localhost:9092
-    consumer:
-      group-id: admin-service-group
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: Deepak
+    password: Deepak123
+    pool:
+      enabled: true
+      max-connections: 50
   cloud:
     config:
       enabled: false
