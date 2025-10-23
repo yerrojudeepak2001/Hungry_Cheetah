@@ -17,7 +17,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/admin/analytics")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class AnalyticsController {
 
     private final AnalyticsServiceClient analyticsServiceClient;

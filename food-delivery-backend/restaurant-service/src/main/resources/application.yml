@@ -15,9 +15,9 @@ spring:
       ddl-auto: update
     show-sql: true
   # MongoDB Configuration for flexible data (Reviews, AR Menus, Virtual Tours)
-  data:
-    mongodb:
-      uri: mongodb+srv://foodapp_user:FoodApp123@cluster0.vma43un.mongodb.net/food_delivery?retryWrites=true&w=majority&appName=Cluster0
+  #data:
+    #mongodb:
+    #  uri: mongodb+srv://foodapp_user:FoodApp123@cluster0.vma43un.mongodb.net/food_delivery?retryWrites=true&w=majority&appName=Cluster0
 
       # Alternative configuration:
       # host: localhost

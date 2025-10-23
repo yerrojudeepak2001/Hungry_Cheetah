@@ -37,7 +37,6 @@ com\foodapp\user\controller\PreferenceController.class
 com\foodapp\user\client\NotificationClient.class
 com\foodapp\user\dto\DeliveryAddressDto.class
 com\foodapp\user\repository\PreferenceRepository.class
-com\foodapp\user\config\SecurityConfig.class
 com\foodapp\user\repository\AddressRepository.class
 com\foodapp\user\client\PaymentClientFallback.class
 com\foodapp\user\dto\DietaryRestrictionsRequest.class

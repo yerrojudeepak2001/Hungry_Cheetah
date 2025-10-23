@@ -6,6 +6,15 @@ spring:
     name: API-GATEWAY
   config:
     import: optional:configserver:http://localhost:8888
+  security:
+    jwt:
+      secret: ${JWT_SECRET:34510220d4bf1609c88acb0256b07a2e4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b}
+      expiration: 86400000 # 24 hours
+
+  # JWT Configuration - Format that matches the JwtTokenProvider expectations
+  jwt:
+    secret: ${JWT_SECRET:34510220d4bf1609c88acb0256b07a2e4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b}
+    expiration: 86400000 # 24 hours
   cloud:
     config:
       enabled: false
@@ -14,27 +23,27 @@ spring:
         locator:
           enabled: true
           lower-case-service-id: true
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins:
-              - "http://localhost:3000"
-              - "http://127.0.0.1:3000"
-              - "http://localhost:3001"
-              - "http://127.0.0.1:3001"
-              - "http://localhost:4200"
-              - "https://yourdomain.com"
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - OPTIONS
-              - PATCH
-              - HEAD
-            allowedHeaders: "*"
-            allowCredentials: true
-            maxAge: 3600
+      # globalcors:
+      #   cors-configurations:
+      #     '[/**]':
+      #       allowedOrigins:
+      #         - "http://localhost:3000"
+      #         - "http://127.0.0.1:3000"
+      #         - "http://localhost:3001"
+      #         - "http://127.0.0.1:3001"
+      #         - "http://localhost:4200"
+      #         - "https://yourdomain.com"
+      #       allowedMethods:
+      #         - GET
+      #         - POST
+      #         - PUT
+      #         - DELETE
+      #         - OPTIONS
+      #         - PATCH
+      #         - HEAD
+      #       allowedHeaders: "*"
+      #       allowCredentials: true
+      #       maxAge: 3600
       routes:
         - id: user-service
           uri: lb://USER-SERVICE
@@ -48,6 +57,7 @@ spring:
           uri: lb://RESTAURANT-SERVICE
           predicates:
             - Path=/api/restaurant/**
+            - Path=/api/restaurants/**
         - id: payment-service
           uri: lb://PAYMENT-SERVICE
           predicates:

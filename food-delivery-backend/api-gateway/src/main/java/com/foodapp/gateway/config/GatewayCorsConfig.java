@@ -15,16 +15,17 @@ public class GatewayCorsConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         
         // Allow your frontend origins
-        configuration.setAllowedOrigins(Arrays.asList(
-            "http://localhost:3000",    // React default
+        // Use allowedOriginPatterns to avoid duplicate Access-Control-Allow-Origin values
+        configuration.setAllowedOriginPatterns(Arrays.asList(
+            "http://localhost:3000",
             "http://127.0.0.1:3000",
             "http://localhost:3001",
             "http://127.0.0.1:3001",
-            "http://localhost:4200",    // Angular default
+            "http://localhost:4200",
             "http://127.0.0.1:4200",
-            "http://localhost:8081",    // Vue default
+            "http://localhost:8081",
             "http://127.0.0.1:8081",
-            "https://yourdomain.com"    // Production domain
+            "https://yourdomain.com"
         ));
         
         // Allow all common HTTP methods

@@ -30,6 +30,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 // Public endpoints - no authentication required
                 .requestMatchers(
+                    "/api/restaurants",              // Public get all restaurants
                     "/api/restaurants/search",       // Public restaurant search
                     "/api/restaurants/{id}",         // Public restaurant details
                     "/api/restaurants/{id}/menu",    // Public menu viewing
