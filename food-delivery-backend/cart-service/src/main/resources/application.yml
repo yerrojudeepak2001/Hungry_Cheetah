@@ -46,13 +46,7 @@ spring:
             trust: smtp.gmail.com
   
   # ActiveMQ Configuration
-  activemq:
-    broker-url: tcp://localhost:61616
-    user: admin
-    password: admin
-    pool:
-      enabled: true
-      max-connections: 50
+
   
   # MongoDB Configuration
   data:

@@ -1,3 +1,5 @@
+
+      
 server:
   port: 8180
 
@@ -70,6 +72,18 @@ spring:
           uri: lb://AI-SERVICE
           predicates:
             - Path=/api/ai/**
+        - id: cart-service
+          uri: lb://CART-SERVICE
+          predicates:
+            - Path=/api/cart/**
+        - id: payment-service
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/api/payment/**
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/api/order/**
 
 eureka:
   client:
