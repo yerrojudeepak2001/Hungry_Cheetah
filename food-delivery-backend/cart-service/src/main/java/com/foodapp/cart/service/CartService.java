@@ -623,4 +623,35 @@ public class CartService {
     public Cart getCartSummary(Long userId) {
         return getCartByUserId(String.valueOf(userId)).orElse(null);
     }
+    /**
+     * Debug method to get a string summary of the cart for a given userId.
+     * @param userId the user ID
+     * @return String summary of the cart or a message if not found
+     */
+    public String debugCart(String userId) {
+        Optional<Cart> cartOpt = getCartByUserId(userId);
+        if (cartOpt.isPresent()) {
+            Cart cart = cartOpt.get();
+            StringBuilder sb = new StringBuilder();
+            sb.append("Cart Debug Info for userId: ").append(userId).append("\n");
+            sb.append("Cart ID: ").append(cart.getId()).append("\n");
+            sb.append("Restaurant ID: ").append(cart.getRestaurantId()).append("\n");
+            sb.append("Total Amount: ").append(cart.getTotalAmount()).append("\n");
+            sb.append("Is Active: ").append(cart.getIsActive()).append("\n");
+            sb.append("Last Updated: ").append(cart.getUpdatedAt()).append("\n");
+            sb.append("Items: ").append(cart.getItems() != null ? cart.getItems().size() : 0).append("\n");
+            if (cart.getItems() != null) {
+                for (CartItem item : cart.getItems()) {
+                    sb.append("  - MenuItem ID: ").append(item.getMenuItemId())
+                      .append(", Name: ").append(item.getItemName())
+                      .append(", Qty: ").append(item.getQuantity())
+                      .append(", Price: ").append(item.getPrice())
+                      .append("\n");
+                }
+            }
+            return sb.toString();
+        } else {
+            return "No active cart found for userId: " + userId;
+        }
+    }
 }

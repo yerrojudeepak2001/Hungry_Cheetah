@@ -4,5 +4,7 @@ C:\Users\deepa\Desktop\Food App\food-delivery-backend\api-gateway\src\main\java\
 C:\Users\deepa\Desktop\Food App\food-delivery-backend\api-gateway\src\main\java\com\foodapp\gateway\dto\ServiceHealth.java
 C:\Users\deepa\Desktop\Food App\food-delivery-backend\api-gateway\src\main\java\com\foodapp\gateway\filters\CorsFilter.java
 C:\Users\deepa\Desktop\Food App\food-delivery-backend\api-gateway\src\main\java\com\foodapp\gateway\client\ServiceHealthClient.java
+C:\Users\deepa\Desktop\Food App\food-delivery-backend\api-gateway\src\main\java\com\foodapp\gateway\config\SecurityConfig.java
+C:\Users\deepa\Desktop\Food App\food-delivery-backend\api-gateway\src\main\java\com\foodapp\gateway\config\WebClientConfig.java
 C:\Users\deepa\Desktop\Food App\food-delivery-backend\api-gateway\src\main\java\com\foodapp\gateway\client\ServiceHealthClientFallback.java
 C:\Users\deepa\Desktop\Food App\food-delivery-backend\api-gateway\src\main\java\com\foodapp\gateway\config\RouterConfig.java
