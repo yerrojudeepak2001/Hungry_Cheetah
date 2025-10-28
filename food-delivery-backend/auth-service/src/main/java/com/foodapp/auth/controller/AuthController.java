@@ -9,6 +9,8 @@ import com.foodapp.common.dto.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -41,20 +43,23 @@ public class AuthController {
         authService.logout(token);
         return ResponseEntity.ok(new ApiResponse<>(true, "Logged out successfully", null));
     }
-    
+
     @PostMapping("/validate-token")
-    public ResponseEntity<ApiResponse<TokenValidationResponse>> validateToken(@RequestParam("token") String token) {
+    public ResponseEntity<ApiResponse<TokenValidationResponse>> validateToken(
+            @RequestBody Map<String, String> body) {
+        String token = body.get("token");
         try {
             TokenValidationResponse userInfo = authService.getUserInfo(token);
             return ResponseEntity.ok(new ApiResponse<>(true, "Token validation successful", userInfo));
         } catch (Exception e) {
-            // Return an invalid token response instead of empty body
             TokenValidationResponse invalidResponse = new TokenValidationResponse();
             invalidResponse.setValid(false);
-            return ResponseEntity.status(401).body(new ApiResponse<>(false, "Token validation failed", invalidResponse));
+            return ResponseEntity.status(401)
+                    .body(new ApiResponse<>(false, "Token validation failed", invalidResponse));
         }
     }
-    
+
+
     @GetMapping("/userinfo")
     public ResponseEntity<ApiResponse<TokenValidationResponse>> getUserInfo(@RequestHeader("Authorization") String authHeader) {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {

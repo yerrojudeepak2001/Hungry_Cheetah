@@ -28,7 +28,7 @@ spring:
     pool:
       enabled: true
       max-connections: 50
-  
+
   # Email Configuration
   mail:
     host: smtp.gmail.com
@@ -44,10 +44,9 @@ spring:
             required: true
           ssl:
             trust: smtp.gmail.com
-  
+
   # ActiveMQ Configuration
 
-  
   # MongoDB Configuration
   data:
     mongodb:
@@ -92,4 +91,4 @@ management:
 
 logging:
   level:
-    com.foodapp.cart: DEBUG
+    com.foodapp.cart: INFO

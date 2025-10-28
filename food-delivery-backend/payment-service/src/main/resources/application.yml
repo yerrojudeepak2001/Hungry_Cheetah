@@ -4,16 +4,19 @@ server:
 spring:
   application:
     name: PAYMENT-SERVICE
+
   # MySQL Database Configuration
   datasource:
     url: jdbc:mysql://100.122.144.43:3306/food_app
     username: teamuser
     password: password123
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+
   # JMS Configuration (Artemis)
   artemis:
     mode: embedded
@@ -23,6 +26,7 @@ spring:
         - payment.success.queue
         - payment.failure.queue
         - payment.notification.queue
+
   activemq:
     broker-url: tcp://100.122.144.43:61616
     user: Deepak
@@ -30,12 +34,13 @@ spring:
     pool:
       enabled: true
       max-connections: 50
+
   # SMTP Configuration
   mail:
     host: smtp.gmail.com
     port: 587
     username: your-email@gmail.com # Replace with your email
-    password: your-app-password    # Replace with your app password
+    password: your-app-password # Replace with your app password
     properties:
       mail:
         smtp:
@@ -45,6 +50,7 @@ spring:
             required: true
           ssl:
             trust: smtp.gmail.com
+
   cloud:
     loadbalancer:
       ribbon:
@@ -58,8 +64,3 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     prefer-ip-address: true
-
-stripe:
-  secret-key: ${STRIPE_SECRET_KEY:sk_test_your_stripe_secret_key_here}
-  publishable-key: ${STRIPE_PUBLISHABLE_KEY:pk_test_your_publishable_key_here}
-  webhook-secret: ${STRIPE_WEBHOOK_SECRET:whsec_your_webhook_secret_here}

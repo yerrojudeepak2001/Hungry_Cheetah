@@ -1,6 +1,6 @@
 package com.foodapp.payment.controller;
 
-import com.foodapp.common.dto.ApiResponse;
+import com.foodapp.payment.dto.ApiResponse;
 import com.foodapp.payment.service.StripePaymentService;
 import com.stripe.exception.StripeException;
 import com.stripe.model.*;
@@ -35,7 +35,7 @@ public class StripeController {
             PaymentIntent paymentIntent = stripePaymentService.createPaymentIntent(
                     amount, currency, customerId, description);
 
-            return ResponseEntity.ok(new ApiResponse<>(true, 
+            return ResponseEntity.ok(new ApiResponse<>(true,
                     "Payment intent created successfully", paymentIntent));
         } catch (StripeException e) {
             log.error("Error creating payment intent: ", e);
@@ -60,7 +60,7 @@ public class StripeController {
             PaymentIntent paymentIntent = stripePaymentService.confirmPaymentIntent(
                     paymentIntentId, paymentMethodId);
 
-            return ResponseEntity.ok(new ApiResponse<>(true, 
+            return ResponseEntity.ok(new ApiResponse<>(true,
                     "Payment confirmed successfully", paymentIntent));
         } catch (StripeException e) {
             log.error("Error confirming payment: ", e);
@@ -82,7 +82,7 @@ public class StripeController {
 
             Customer customer = stripePaymentService.createCustomer(email, name, phone);
 
-            return ResponseEntity.ok(new ApiResponse<>(true, 
+            return ResponseEntity.ok(new ApiResponse<>(true,
                     "Customer created successfully", customer));
         } catch (StripeException e) {
             log.error("Error creating customer: ", e);
@@ -98,7 +98,7 @@ public class StripeController {
     public ResponseEntity<ApiResponse<Customer>> getCustomer(@PathVariable String customerId) {
         try {
             Customer customer = stripePaymentService.retrieveCustomer(customerId);
-            return ResponseEntity.ok(new ApiResponse<>(true, 
+            return ResponseEntity.ok(new ApiResponse<>(true,
                     "Customer retrieved successfully", customer));
         } catch (StripeException e) {
             log.error("Error retrieving customer: ", e);
@@ -115,13 +115,14 @@ public class StripeController {
             @RequestBody Map<String, Object> refundRequest) {
         try {
             String paymentIntentId = refundRequest.get("paymentIntentId").toString();
-            BigDecimal amount = refundRequest.containsKey("amount") ? 
-                    new BigDecimal(refundRequest.get("amount").toString()) : null;
+            BigDecimal amount = refundRequest.containsKey("amount")
+                    ? new BigDecimal(refundRequest.get("amount").toString())
+                    : null;
             String reason = refundRequest.getOrDefault("reason", "requested_by_customer").toString();
 
             Refund refund = stripePaymentService.createRefund(paymentIntentId, amount, reason);
 
-            return ResponseEntity.ok(new ApiResponse<>(true, 
+            return ResponseEntity.ok(new ApiResponse<>(true,
                     "Refund created successfully", refund));
         } catch (StripeException e) {
             log.error("Error creating refund: ", e);
@@ -137,7 +138,7 @@ public class StripeController {
     public ResponseEntity<ApiResponse<String>> getPaymentStatus(@PathVariable String paymentIntentId) {
         try {
             String status = stripePaymentService.getPaymentStatus(paymentIntentId);
-            return ResponseEntity.ok(new ApiResponse<>(true, 
+            return ResponseEntity.ok(new ApiResponse<>(true,
                     "Payment status retrieved successfully", status));
         } catch (StripeException e) {
             log.error("Error retrieving payment status: ", e);
@@ -153,7 +154,7 @@ public class StripeController {
     public ResponseEntity<ApiResponse<PaymentIntent>> cancelPaymentIntent(@PathVariable String paymentIntentId) {
         try {
             PaymentIntent paymentIntent = stripePaymentService.cancelPaymentIntent(paymentIntentId);
-            return ResponseEntity.ok(new ApiResponse<>(true, 
+            return ResponseEntity.ok(new ApiResponse<>(true,
                     "Payment cancelled successfully", paymentIntent));
         } catch (StripeException e) {
             log.error("Error cancelling payment: ", e);
@@ -172,7 +173,7 @@ public class StripeController {
             String customerId = request.get("customerId");
             SetupIntent setupIntent = stripePaymentService.createSetupIntent(customerId);
 
-            return ResponseEntity.ok(new ApiResponse<>(true, 
+            return ResponseEntity.ok(new ApiResponse<>(true,
                     "Setup intent created successfully", setupIntent));
         } catch (StripeException e) {
             log.error("Error creating setup intent: ", e);
@@ -190,7 +191,7 @@ public class StripeController {
             @RequestParam(defaultValue = "card") String type) {
         try {
             PaymentMethodCollection paymentMethods = stripePaymentService.listPaymentMethods(customerId, type);
-            return ResponseEntity.ok(new ApiResponse<>(true, 
+            return ResponseEntity.ok(new ApiResponse<>(true,
                     "Payment methods retrieved successfully", paymentMethods));
         } catch (StripeException e) {
             log.error("Error retrieving payment methods: ", e);

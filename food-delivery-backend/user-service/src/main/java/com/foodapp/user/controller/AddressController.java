@@ -1,6 +1,6 @@
 package com.foodapp.user.controller;
 
-import com.foodapp.common.dto.ApiResponse;
+import com.foodapp.user.dto.ApiResponse;
 import com.foodapp.user.model.Address;
 import com.foodapp.user.service.AddressService;
 import org.springframework.http.HttpStatus;

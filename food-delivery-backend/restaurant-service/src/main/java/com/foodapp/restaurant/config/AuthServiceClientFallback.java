@@ -1,11 +1,11 @@
 package com.foodapp.restaurant.config;
 
 import org.springframework.stereotype.Component;
-import com.foodapp.common.dto.ApiResponse;
+import com.foodapp.restaurant.dto.ApiResponse;
 
 @Component
 public class AuthServiceClientFallback implements AuthServiceClient {
-    
+
     @Override
     public ApiResponse<TokenValidationResponse> validateToken(String token) {
         // Return failure response when auth service is down

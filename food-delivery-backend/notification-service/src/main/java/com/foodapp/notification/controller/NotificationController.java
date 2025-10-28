@@ -1,6 +1,6 @@
 package com.foodapp.notification.controller;
 
-import com.foodapp.common.dto.ApiResponse;
+import com.foodapp.notification.dto.ApiResponse;
 import com.foodapp.notification.model.*;
 import com.foodapp.notification.service.NotificationService;
 import com.foodapp.notification.service.PreferenceService;
@@ -16,8 +16,8 @@ public class NotificationController {
     private final TemplateService templateService;
 
     public NotificationController(NotificationService notificationService,
-                                PreferenceService preferenceService,
-                                TemplateService templateService) {
+            PreferenceService preferenceService,
+            TemplateService templateService) {
         this.notificationService = notificationService;
         this.preferenceService = preferenceService;
         this.templateService = templateService;

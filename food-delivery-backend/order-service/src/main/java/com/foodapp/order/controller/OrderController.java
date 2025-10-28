@@ -1,14 +1,14 @@
 package com.foodapp.order.controller;
 
-import com.foodapp.common.dto.ApiResponse;
-import com.foodapp.common.dto.OrderDTO;
+import com.foodapp.order.dto.ApiResponse;
+import com.foodapp.order.dto.OrderDTO;
 import com.foodapp.order.model.GroupOrder;
 import com.foodapp.order.model.ScheduledOrder;
 import com.foodapp.order.model.MultiRestaurantOrder;
 import com.foodapp.order.service.*;
+import com.foodapp.order.security.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.Authentication;
 import java.util.List;
 
 @RestController
@@ -18,39 +18,65 @@ public class OrderController {
     private final GroupOrderService groupOrderService;
     private final ScheduledOrderService scheduledOrderService;
     private final MultiRestaurantOrderService multiRestaurantOrderService;
+    private final JwtUtil jwtUtil;
 
     public OrderController(OrderService orderService,
-                         GroupOrderService groupOrderService,
-                         ScheduledOrderService scheduledOrderService,
-                         MultiRestaurantOrderService multiRestaurantOrderService) {
+            GroupOrderService groupOrderService,
+            ScheduledOrderService scheduledOrderService,
+            MultiRestaurantOrderService multiRestaurantOrderService,
+            JwtUtil jwtUtil) {
         this.orderService = orderService;
         this.groupOrderService = groupOrderService;
         this.scheduledOrderService = scheduledOrderService;
         this.multiRestaurantOrderService = multiRestaurantOrderService;
+        this.jwtUtil = jwtUtil;
     }
 
     // Regular Orders
     @PostMapping
-    public ResponseEntity<ApiResponse<?>> createOrder(@RequestBody OrderDTO orderDTO, Authentication authentication) {
-        // Get user ID from authentication
-        String userId = authentication.getName();
-        orderDTO.setUserId(Long.parseLong(userId));
-        
-        var order = orderService.createOrder(orderDTO);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Order created successfully", order));
+    public ResponseEntity<ApiResponse<?>> createOrder(
+            @RequestBody OrderDTO orderDTO,
+            @RequestHeader(value = "X-User-Id", required = false) String userIdHeader,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
+        try {
+            String userId = jwtUtil.getUserIdFromHeaders(authToken, userIdHeader);
+            if (userId == null) {
+                return ResponseEntity.status(401)
+                        .body(new ApiResponse<>(false, "Unauthorized", null));
+            }
+
+            orderDTO.setUserId(Long.parseLong(userId));
+            var order = orderService.createOrder(orderDTO);
+            return ResponseEntity.ok(new ApiResponse<>(true, "Order created successfully", order));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse<>(false, "Failed to create order: " + e.getMessage(), null));
+        }
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<ApiResponse<?>> getOrder(@PathVariable Long orderId, Authentication authentication) {
+    public ResponseEntity<ApiResponse<?>> getOrder(@PathVariable Long orderId) {
         var order = orderService.getOrderStatus(orderId);
         return ResponseEntity.ok(new ApiResponse<>(true, "Order fetched successfully", order));
     }
 
     @GetMapping("/user")
-    public ResponseEntity<ApiResponse<?>> getUserOrders(Authentication authentication) {
-        String userId = authentication.getName();
-        var orders = orderService.getUserOrders(Long.parseLong(userId));
-        return ResponseEntity.ok(new ApiResponse<>(true, "User orders fetched successfully", orders));
+    public ResponseEntity<ApiResponse<?>> getUserOrders(
+            @RequestHeader(value = "X-User-Id", required = false) String userIdHeader,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
+        try {
+            String userId = jwtUtil.getUserIdFromHeaders(authToken, userIdHeader);
+            if (userId == null) {
+                return ResponseEntity.status(401)
+                        .body(new ApiResponse<>(false, "Unauthorized", null));
+            }
+
+            var orders = orderService.getUserOrders(Long.parseLong(userId));
+            return ResponseEntity.ok(new ApiResponse<>(true, "User orders fetched successfully", orders));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse<>(false, "Failed to fetch orders: " + e.getMessage(), null));
+        }
     }
 
     @PutMapping("/{orderId}/status")

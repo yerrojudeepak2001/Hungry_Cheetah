@@ -4,8 +4,6 @@ import com.foodapp.cart.service.CartValidationService;
 import com.foodapp.cart.entity.Cart;
 import com.foodapp.cart.entity.CartItem;
 import com.foodapp.cart.client.RestaurantClient;
-import com.foodapp.cart.client.InventoryClient;
-import com.foodapp.cart.dto.StockStatus;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import java.math.BigDecimal;
@@ -13,9 +11,8 @@ import java.math.BigDecimal;
 @Service
 @RequiredArgsConstructor
 public class CartValidationServiceImpl implements CartValidationService {
-    
+
     private final RestaurantClient restaurantClient;
-    private final InventoryClient inventoryClient;
 
     @Override
     public boolean validateCart(Cart cart) {
@@ -84,24 +81,11 @@ public class CartValidationServiceImpl implements CartValidationService {
         }
 
         try {
-            StockStatus stockStatus = inventoryClient.getItemStock(itemId);
-            if (stockStatus == null) {
-                return false; // Item not found
-            }
+            // Simplified validation - assume items are available
+            // TODO: Add basic availability logic without external inventory service
+            return true; // For now, assume all items are available
 
-            // Check if item is available
-            if (!stockStatus.getIsAvailable()) {
-                return false;
-            }
-
-            // Check if sufficient stock is available
-            if (stockStatus.getAvailableStock() != null && stockStatus.getAvailableStock() < quantity) {
-                return false;
-            }
-
-            return true;
         } catch (Exception e) {
-            // If service call fails, assume item is not available
             return false;
         }
     }
@@ -123,8 +107,8 @@ public class CartValidationServiceImpl implements CartValidationService {
 
     @Override
     public boolean validateDeliveryArea(String restaurantId, String deliveryAddress) {
-        if (restaurantId == null || deliveryAddress == null || 
-            restaurantId.trim().isEmpty() || deliveryAddress.trim().isEmpty()) {
+        if (restaurantId == null || deliveryAddress == null ||
+                restaurantId.trim().isEmpty() || deliveryAddress.trim().isEmpty()) {
             return false;
         }
 

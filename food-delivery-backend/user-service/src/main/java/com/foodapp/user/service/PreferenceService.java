@@ -6,7 +6,7 @@ import com.foodapp.user.model.UserPreference;
 import com.foodapp.user.repository.PreferenceRepository;
 import com.foodapp.user.repository.UserPreferenceRepository;
 import com.foodapp.user.repository.UserRepository;
-import com.foodapp.common.exception.ResourceNotFoundException;
+import com.foodapp.user.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
@@ -24,7 +24,7 @@ public class PreferenceService {
     private final UserRepository userRepository;
 
     public PreferenceService(
-            UserPreferenceRepository userPreferenceRepository, 
+            UserPreferenceRepository userPreferenceRepository,
             PreferenceRepository preferenceRepository,
             UserRepository userRepository) {
         this.userPreferenceRepository = userPreferenceRepository;
@@ -43,14 +43,14 @@ public class PreferenceService {
     public UserPreference updatePreference(Long userId, UserPreference newPreference) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
-        
+
         UserPreference existingPreference = userPreferenceRepository.findByUserId(userId)
                 .orElseGet(() -> {
                     UserPreference userPref = new UserPreference();
                     userPref.setUser(user);
                     return userPref;
                 });
-        
+
         // Update fields from newPreference
         if (newPreference.getDietaryPreferences() != null) {
             existingPreference.setDietaryPreferences(newPreference.getDietaryPreferences());
@@ -94,14 +94,14 @@ public class PreferenceService {
         if (newPreference.getAutoApplyCoupons() != null) {
             existingPreference.setAutoApplyCoupons(newPreference.getAutoApplyCoupons());
         }
-        
+
         return userPreferenceRepository.save(existingPreference);
     }
 
     public UserPreference getPreference(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
-                
+
         return userPreferenceRepository.findByUserId(userId)
                 .orElseGet(() -> {
                     UserPreference newPreference = new UserPreference();
@@ -114,36 +114,36 @@ public class PreferenceService {
     public void deletePreference(Long userId) {
         userPreferenceRepository.findByUserId(userId)
                 .ifPresent(userPreferenceRepository::delete);
-        
+
         // Also delete individual preferences
         preferenceRepository.deleteByUserId(userId);
     }
-    
+
     @Transactional
     public UserPreference updateDietaryPreferences(Long userId, List<String> restrictions) {
         UserPreference userPreference = getPreference(userId);
         userPreference.setDietaryPreferences(new HashSet<>(restrictions));
         return userPreferenceRepository.save(userPreference);
     }
-    
+
     public Set<String> getDietaryPreferences(Long userId) {
         return userPreferenceRepository.findByUserId(userId)
                 .map(UserPreference::getDietaryPreferences)
                 .orElse(Collections.emptySet());
     }
-    
+
     @Transactional
     public List<Preference> createOrUpdatePreferences(Long userId, String category, List<String> values) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
-                
+
         // First deactivate all existing preferences in this category
         preferenceRepository.findByUserIdAndCategory(userId, category)
                 .forEach(pref -> {
                     pref.setActive(false);
                     preferenceRepository.save(pref);
                 });
-                
+
         // Then create new preferences
         return values.stream().map(value -> {
             Preference pref = new Preference();
@@ -155,7 +155,7 @@ public class PreferenceService {
             return preferenceRepository.save(pref);
         }).collect(Collectors.toList());
     }
-    
+
     public List<Preference> getActivePreferencesByCategory(Long userId, String category) {
         return preferenceRepository.findActivePreferencesByUserIdAndCategory(userId, category);
     }

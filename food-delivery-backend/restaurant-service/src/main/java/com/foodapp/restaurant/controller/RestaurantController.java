@@ -1,12 +1,12 @@
 
 package com.foodapp.restaurant.controller;
 
-
-import com.foodapp.common.dto.ApiResponse;
+import com.foodapp.restaurant.dto.ApiResponse;
 import com.foodapp.restaurant.model.*;
 import com.foodapp.restaurant.service.RestaurantService;
 import com.foodapp.restaurant.service.MenuService;
 import com.foodapp.restaurant.service.ReviewService;
+import com.foodapp.restaurant.security.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,14 +24,17 @@ public class RestaurantController {
     public ResponseEntity<ApiResponse<?>> uploadRestaurantImage(
             @PathVariable Long restaurantId,
             @RequestParam("image") MultipartFile imageFile) {
-        // Define the directory to save images (ensure this directory exists or handle creation)
+        // Define the directory to save images (ensure this directory exists or handle
+        // creation)
         String uploadDir = "uploads/restaurant-images/";
         try {
             // Create directory if not exists
             File dir = new File(uploadDir);
-            if (!dir.exists()) dir.mkdirs();
+            if (!dir.exists())
+                dir.mkdirs();
             // Save file with a unique name
-            String fileName = "restaurant-" + restaurantId + "-" + System.currentTimeMillis() + "-" + imageFile.getOriginalFilename();
+            String fileName = "restaurant-" + restaurantId + "-" + System.currentTimeMillis() + "-"
+                    + imageFile.getOriginalFilename();
             Path filePath = Paths.get(uploadDir, fileName);
             Files.write(filePath, imageFile.getBytes());
             // Update restaurant entity with image URL/path
@@ -40,21 +43,25 @@ public class RestaurantController {
             restaurantService.updateRestaurant(restaurantId, restaurant);
             return ResponseEntity.ok(new ApiResponse<>(true, "Image uploaded successfully", restaurant.getImageUrl()));
         } catch (IOException e) {
-            return ResponseEntity.status(500).body(new ApiResponse<>(false, "Image upload failed: " + e.getMessage(), null));
+            return ResponseEntity.status(500)
+                    .body(new ApiResponse<>(false, "Image upload failed: " + e.getMessage(), null));
         }
     }
+
     private final RestaurantService restaurantService;
     private final MenuService menuService;
     private final ReviewService reviewService;
+    private final JwtUtil jwtUtil;
 
     public RestaurantController(RestaurantService restaurantService,
-                              MenuService menuService,
-                              ReviewService reviewService) {
+            MenuService menuService,
+            ReviewService reviewService,
+            JwtUtil jwtUtil) {
         this.restaurantService = restaurantService;
         this.menuService = menuService;
         this.reviewService = reviewService;
+        this.jwtUtil = jwtUtil;
     }
-
 
     // Get all restaurants
     @GetMapping

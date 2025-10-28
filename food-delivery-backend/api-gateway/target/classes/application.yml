@@ -1,19 +1,11 @@
-
-      
 server:
-  port: 8180
+  port: 8080
 
 spring:
   application:
     name: API-GATEWAY
   config:
     import: optional:configserver:http://localhost:8888
-  security:
-    jwt:
-      secret: ${JWT_SECRET:34510220d4bf1609c88acb0256b07a2e4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b}
-      expiration: 86400000 # 24 hours
-
-  # JWT Configuration - Format that matches the JwtTokenProvider expectations
   jwt:
     secret: ${JWT_SECRET:34510220d4bf1609c88acb0256b07a2e4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b}
     expiration: 86400000 # 24 hours
@@ -25,65 +17,237 @@ spring:
         locator:
           enabled: true
           lower-case-service-id: true
-      # globalcors:
-      #   cors-configurations:
-      #     '[/**]':
-      #       allowedOrigins:
-      #         - "http://localhost:3000"
-      #         - "http://127.0.0.1:3000"
-      #         - "http://localhost:3001"
-      #         - "http://127.0.0.1:3001"
-      #         - "http://localhost:4200"
-      #         - "https://yourdomain.com"
-      #       allowedMethods:
-      #         - GET
-      #         - POST
-      #         - PUT
-      #         - DELETE
-      #         - OPTIONS
-      #         - PATCH
-      #         - HEAD
-      #       allowedHeaders: "*"
-      #       allowCredentials: true
-      #       maxAge: 3600
+      globalcors:
+        cors-configurations:
+          "[/**]":
+            allowedOrigins:
+              - "http://localhost:3000"
+              - "http://127.0.0.1:3000"
+              - "http://localhost:3001"
+              - "http://127.0.0.1:3001"
+              - "http://localhost:4200"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+              - PATCH
+              - HEAD
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
       routes:
+        # Auth Service - No JWT filter (Public endpoints)
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/api/auth/**
+
+        # User Registration - No JWT filter (Public)
+        - id: user-register
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/users/register
+            - Method=POST
+
+        # User Login - No JWT filter (Public)
+        - id: user-login
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/users/login
+            - Method=POST
+
+        # Password Reset - No JWT filter (Public)
+        - id: user-password-reset
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/users/forgot-password
+            - Method=POST
+
+        # Verify Email - No JWT filter (Public)
+        - id: user-verify-email
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/users/verify-email
+            - Method=POST
+
+        # Public Restaurant browsing - No JWT filter
+        - id: restaurant-public-list
+          uri: lb://RESTAURANT-SERVICE
+          predicates:
+            - Path=/api/restaurants
+            - Method=GET
+
+        # Public Restaurant details - No JWT filter
+        - id: restaurant-public-details
+          uri: lb://RESTAURANT-SERVICE
+          predicates:
+            - Path=/api/restaurants/*/menu
+            - Method=GET
+
+        # Public Restaurant by ID - No JWT filter
+        - id: restaurant-public-by-id
+          uri: lb://RESTAURANT-SERVICE
+          predicates:
+            - Path=/api/restaurants/*
+            - Method=GET
+
+        # Public Search - No JWT filter
+        - id: search-public
+          uri: lb://SEARCH-SERVICE
+          predicates:
+            - Path=/api/search/restaurants
+            - Method=GET
+
+        # Public Search Menu Items - No JWT filter
+        - id: search-menu-public
+          uri: lb://SEARCH-SERVICE
+          predicates:
+            - Path=/api/search/menu
+            - Method=GET
+
+        # Public Recommendations - No JWT filter (for browsing)
+        - id: recommendations-public
+          uri: lb://RECOMMENDATION-SERVICE
+          predicates:
+            - Path=/api/recommendations/popular
+            - Method=GET
+
+        # Public Analytics - No JWT filter (for public metrics)
+        - id: analytics-public
+          uri: lb://ANALYTICS-SERVICE
+          predicates:
+            - Path=/api/analytics/public/**
+            - Method=GET
+
+        # Health Check Endpoints - No JWT filter (for monitoring)
+        - id: health-checks
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/actuator/health
+            - Method=GET
+
+        # Public Tracking (Order status for customers) - No JWT filter
+        - id: tracking-public
+          uri: lb://TRACKING-SERVICE
+          predicates:
+            - Path=/api/tracking/public/**
+            - Method=GET
+
+        # ============= PROTECTED ROUTES (Require JWT) =============
+
+        # User Service - With JWT filter
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/api/user/**
-        - id: order-service
-          uri: lb://ORDER-SERVICE
-          predicates:
-            - Path=/api/order/**
+            - Path=/api/users/**
+          filters:
+            - name: JwtAuthenticationFilter
+
+        # Restaurant Service - With JWT filter for protected operations
         - id: restaurant-service
           uri: lb://RESTAURANT-SERVICE
           predicates:
-            - Path=/api/restaurant/**
             - Path=/api/restaurants/**
-        - id: payment-service
-          uri: lb://PAYMENT-SERVICE
+          filters:
+            - name: JwtAuthenticationFilter
+
+        # Order Service - With JWT filter
+        - id: order-service
+          uri: lb://ORDER-SERVICE
           predicates:
-            - Path=/api/payment/**
-        - id: delivery-service
-          uri: lb://DELIVERY-SERVICE
-          predicates:
-            - Path=/api/delivery/**
-        - id: ai-service
-          uri: lb://AI-SERVICE
-          predicates:
-            - Path=/api/ai/**
+            - Path=/api/orders/**
+          filters:
+            - name: JwtAuthenticationFilter
+
+        # Cart Service - With JWT filter
         - id: cart-service
           uri: lb://CART-SERVICE
           predicates:
             - Path=/api/cart/**
+          filters:
+            - name: JwtAuthenticationFilter
+
+        # Payment Service - With JWT filter
         - id: payment-service
           uri: lb://PAYMENT-SERVICE
           predicates:
-            - Path=/api/payment/**
-        - id: order-service
-          uri: lb://ORDER-SERVICE
+            - Path=/api/payments/**
+          filters:
+            - name: JwtAuthenticationFilter
+
+        # Delivery Service - With JWT filter
+        - id: delivery-service
+          uri: lb://DELIVERY-SERVICE
           predicates:
-            - Path=/api/order/**
+            - Path=/api/delivery/**
+          filters:
+            - name: JwtAuthenticationFilter
+
+        # Admin Service - With JWT filter
+        - id: admin-service
+          uri: lb://ADMIN-SERVICE
+          predicates:
+            - Path=/api/admin/**
+          filters:
+            - name: JwtAuthenticationFilter
+
+        # Notification Service - With JWT filter
+        - id: notification-service
+          uri: lb://NOTIFICATION-SERVICE
+          predicates:
+            - Path=/api/notifications/**
+          filters:
+            - name: JwtAuthenticationFilter
+
+        # AI Service - With JWT filter
+        - id: ai-service
+          uri: lb://AI-SERVICE
+          predicates:
+            - Path=/api/ai/**
+          filters:
+            - name: JwtAuthenticationFilter
+
+        # Analytics Service - With JWT filter
+        - id: analytics-service
+          uri: lb://ANALYTICS-SERVICE
+          predicates:
+            - Path=/api/analytics/**
+          filters:
+            - name: JwtAuthenticationFilter
+
+        # Driver Service - With JWT filter
+        - id: driver-service
+          uri: lb://DRIVER-SERVICE
+          predicates:
+            - Path=/api/drivers/**
+          filters:
+            - name: JwtAuthenticationFilter
+
+        # Recommendation Service - With JWT filter
+        - id: recommendation-service
+          uri: lb://RECOMMENDATION-SERVICE
+          predicates:
+            - Path=/api/recommendations/**
+          filters:
+            - name: JwtAuthenticationFilter
+
+        # Search Service - With JWT filter
+        - id: search-service
+          uri: lb://SEARCH-SERVICE
+          predicates:
+            - Path=/api/search/**
+          filters:
+            - name: JwtAuthenticationFilter
+
+        # Tracking Service - With JWT filter
+        - id: tracking-service
+          uri: lb://TRACKING-SERVICE
+          predicates:
+            - Path=/api/tracking/**
+          filters:
+            - name: JwtAuthenticationFilter
 
 eureka:
   client:

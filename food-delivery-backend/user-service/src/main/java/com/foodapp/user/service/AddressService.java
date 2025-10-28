@@ -4,7 +4,7 @@ import com.foodapp.user.model.Address;
 import com.foodapp.user.model.User;
 import com.foodapp.user.repository.AddressRepository;
 import com.foodapp.user.repository.UserRepository;
-import com.foodapp.common.exception.ResourceNotFoundException;
+import com.foodapp.user.exception.ResourceNotFoundException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,15 +26,16 @@ public class AddressService {
     public Address addAddress(Long userId, Address address) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
-        
+
         address.setUser(user);
-        
-        // If this is the first address or marked as default, reset other default addresses
+
+        // If this is the first address or marked as default, reset other default
+        // addresses
         if (address.isDefault() || addressRepository.findByUserId(userId).isEmpty()) {
             address.setDefault(true);
             addressRepository.resetDefaultAddress(userId);
         }
-        
+
         return addressRepository.save(address);
     }
 
@@ -42,12 +43,12 @@ public class AddressService {
     public Address updateAddress(Long userId, Long addressId, Address updatedAddress) {
         Address existingAddress = addressRepository.findById(addressId)
                 .orElseThrow(() -> new ResourceNotFoundException("Address not found with id: " + addressId));
-        
+
         // Verify that the address belongs to the specified user
         if (!existingAddress.getUser().getId().equals(userId)) {
             throw new AccessDeniedException("User is not authorized to update this address");
         }
-        
+
         // Update fields
         existingAddress.setStreetAddress(updatedAddress.getStreetAddress());
         existingAddress.setCity(updatedAddress.getCity());
@@ -60,13 +61,13 @@ public class AddressService {
         existingAddress.setLandmark(updatedAddress.getLandmark());
         existingAddress.setLatitude(updatedAddress.getLatitude());
         existingAddress.setLongitude(updatedAddress.getLongitude());
-        
+
         // Handle default address logic
         if (updatedAddress.isDefault() && !existingAddress.isDefault()) {
             addressRepository.resetDefaultAddress(userId);
             existingAddress.setDefault(true);
         }
-        
+
         return addressRepository.save(existingAddress);
     }
 
@@ -74,12 +75,12 @@ public class AddressService {
     public void deleteAddress(Long userId, Long addressId) {
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new ResourceNotFoundException("Address not found with id: " + addressId));
-        
+
         // Verify that the address belongs to the specified user
         if (!address.getUser().getId().equals(userId)) {
             throw new AccessDeniedException("User is not authorized to delete this address");
         }
-        
+
         addressRepository.delete(address);
     }
 
@@ -88,7 +89,7 @@ public class AddressService {
         if (!userRepository.existsById(userId)) {
             throw new ResourceNotFoundException("User not found with id: " + userId);
         }
-        
+
         return addressRepository.findByUserId(userId);
     }
 }

@@ -1,6 +1,6 @@
 package com.foodapp.user.controller;
 
-import com.foodapp.common.dto.ApiResponse;
+import com.foodapp.user.dto.ApiResponse;
 import com.foodapp.user.dto.DietaryRestrictionsRequest;
 import com.foodapp.user.model.Preference;
 import com.foodapp.user.model.UserPreference;
@@ -51,7 +51,8 @@ public class PreferenceController {
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Set<String>>> getDietaryPreferences(@PathVariable Long userId) {
         Set<String> dietaryPreferences = preferenceService.getDietaryPreferences(userId);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Dietary preferences fetched successfully", dietaryPreferences));
+        return ResponseEntity
+                .ok(new ApiResponse<>(true, "Dietary preferences fetched successfully", dietaryPreferences));
     }
 
     @PutMapping("/dietary")
@@ -59,8 +60,10 @@ public class PreferenceController {
     public ResponseEntity<ApiResponse<UserPreference>> updateDietaryPreferences(
             @PathVariable Long userId,
             @Valid @RequestBody DietaryRestrictionsRequest request) {
-        UserPreference updatedPreferences = preferenceService.updateDietaryPreferences(userId, request.getRestrictions());
-        return ResponseEntity.ok(new ApiResponse<>(true, "Dietary preferences updated successfully", updatedPreferences));
+        UserPreference updatedPreferences = preferenceService.updateDietaryPreferences(userId,
+                request.getRestrictions());
+        return ResponseEntity
+                .ok(new ApiResponse<>(true, "Dietary preferences updated successfully", updatedPreferences));
     }
 
     @PostMapping("/category/{category}")

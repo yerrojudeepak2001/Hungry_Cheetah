@@ -1,9 +1,15 @@
 package com.foodapp.analytics.controller;
 
-import com.foodapp.common.dto.ApiResponse;
-import com.foodapp.analytics.model.*;
+import com.foodapp.analytics.dto.ApiResponse;
+import com.foodapp.analytics.dto.ReportRequest;
+import com.foodapp.analytics.dto.CustomAnalyticsRequest;
+import com.foodapp.analytics.service.AnalyticsService;
+import com.foodapp.analytics.service.ReportService;
+import com.foodapp.analytics.service.PredictiveService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @RestController
 @RequestMapping("/api/analytics")
@@ -13,11 +19,41 @@ public class AnalyticsController {
     private final PredictiveService predictiveService;
 
     public AnalyticsController(AnalyticsService analyticsService,
-                             ReportService reportService,
-                             PredictiveService predictiveService) {
+            ReportService reportService,
+            PredictiveService predictiveService) {
         this.analyticsService = analyticsService;
         this.reportService = reportService;
         this.predictiveService = predictiveService;
+    }
+
+    // Utility method to parse timeFrame string into start and end dates
+    private LocalDateTime[] parseTimeFrame(String timeFrame) {
+        LocalDateTime endDate = LocalDateTime.now();
+        LocalDateTime startDate;
+
+        switch (timeFrame.toLowerCase()) {
+            case "today":
+                startDate = endDate.toLocalDate().atStartOfDay();
+                break;
+            case "week":
+                startDate = endDate.minus(7, ChronoUnit.DAYS);
+                break;
+            case "month":
+                startDate = endDate.minus(1, ChronoUnit.MONTHS);
+                break;
+            case "quarter":
+                startDate = endDate.minus(3, ChronoUnit.MONTHS);
+                break;
+            case "year":
+                startDate = endDate.minus(1, ChronoUnit.YEARS);
+                break;
+            default:
+                // Default to last 30 days
+                startDate = endDate.minus(30, ChronoUnit.DAYS);
+                break;
+        }
+
+        return new LocalDateTime[] { startDate, endDate };
     }
 
     // Business Analytics
@@ -57,7 +93,8 @@ public class AnalyticsController {
     public ResponseEntity<ApiResponse<?>> getRestaurantAnalytics(
             @PathVariable Long restaurantId,
             @RequestParam String timeFrame) {
-        var analytics = analyticsService.getRestaurantAnalytics(restaurantId, timeFrame);
+        LocalDateTime[] dates = parseTimeFrame(timeFrame);
+        var analytics = analyticsService.getRestaurantAnalytics(restaurantId, dates[0], dates[1]);
         return ResponseEntity.ok(new ApiResponse<>(true, "Restaurant analytics fetched successfully", analytics));
     }
 

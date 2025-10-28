@@ -8,8 +8,8 @@ import com.foodapp.user.client.RestaurantClient;
 import com.foodapp.user.dto.OrderResponse;
 import com.foodapp.user.dto.RestaurantResponse;
 import com.foodapp.user.dto.UserOrderStats;
-import com.foodapp.common.exception.ResourceNotFoundException;
-import com.foodapp.common.exception.DuplicateResourceException;
+import com.foodapp.user.exception.ResourceNotFoundException;
+import com.foodapp.user.exception.UserAlreadyExistsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,11 +27,11 @@ public class UserService {
     private final RestaurantClient restaurantClient;
 
     public UserService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder,
-                       EmailService emailService,
-                       SmsService smsService,
-                       OrderClient orderClient,
-                       RestaurantClient restaurantClient) {
+            PasswordEncoder passwordEncoder,
+            EmailService emailService,
+            SmsService smsService,
+            OrderClient orderClient,
+            RestaurantClient restaurantClient) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
@@ -47,7 +47,7 @@ public class UserService {
         if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
             user.setUsername(generateUsername(user.getEmail()));
         }
-        
+
         validateUniqueFields(user);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setIsEnabled(true);
@@ -109,7 +109,7 @@ public class UserService {
         if (!user.getIsEnabled()) {
             throw new IllegalArgumentException("Account is disabled");
         }
-        
+
         if (!user.getAccountNonLocked()) {
             throw new IllegalArgumentException("Account is locked");
         }
@@ -124,7 +124,7 @@ public class UserService {
         if (deviceToken != null && !deviceToken.trim().isEmpty()) {
             user.setDeviceToken(deviceToken);
         }
-        
+
         User savedUser = userRepository.save(user);
 
         // Send login alert email (optional)
@@ -138,7 +138,8 @@ public class UserService {
         return savedUser;
     }
 
-    // Helper method for finding user by email (useful for login and forgot password)
+    // Helper method for finding user by email (useful for login and forgot
+    // password)
     public User findUserByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
     }
@@ -150,7 +151,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    @Transactional 
+    @Transactional
     public void clearDeviceToken(Long userId) {
         User user = getUser(userId);
         user.setDeviceToken(null);
@@ -160,13 +161,13 @@ public class UserService {
     // ------------------- Utilities -------------------
     private void validateUniqueFields(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new DuplicateResourceException("Email already registered");
+            throw new UserAlreadyExistsException("Email already registered");
         }
         if (userRepository.existsByPhone(user.getPhone())) {
-            throw new DuplicateResourceException("Phone number already registered");
+            throw new UserAlreadyExistsException("Phone number already registered");
         }
         if (userRepository.existsByUsername(user.getUsername())) {
-            throw new DuplicateResourceException("Username already taken");
+            throw new UserAlreadyExistsException("Username already taken");
         }
     }
 
@@ -185,7 +186,7 @@ public class UserService {
         String baseUsername = email.substring(0, email.indexOf("@")).toLowerCase();
         // Remove any non-alphanumeric characters
         baseUsername = baseUsername.replaceAll("[^a-zA-Z0-9]", "");
-        
+
         // Add timestamp to make it unique
         long timestamp = System.currentTimeMillis() % 10000; // Last 4 digits of current time
         return baseUsername + timestamp;
@@ -234,11 +235,11 @@ public class UserService {
         User user = getUser(userId);
         restaurantClient.removeRestaurantFromFavorites(user.getId().toString(), restaurantId.toString());
     }
-    
+
     public User getUserProfile(Long userId) {
         return getUser(userId);
     }
-    
+
     public List<OrderResponse> getOrderHistory(Long userId) {
         return getUserOrders(userId);
     }

@@ -1,6 +1,6 @@
 package com.foodapp.user.controller;
 
-import com.foodapp.common.dto.ApiResponse;
+import com.foodapp.user.dto.ApiResponse;
 import com.foodapp.user.dto.*;
 import com.foodapp.user.service.ExternalServiceIntegrationService;
 import org.springframework.http.ResponseEntity;
@@ -63,7 +63,8 @@ public class UserIntegrationController {
 
     @GetMapping("/notifications/preferences")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<NotificationPreferenceDto>> getNotificationPreferences(@PathVariable Long userId) {
+    public ResponseEntity<ApiResponse<NotificationPreferenceDto>> getNotificationPreferences(
+            @PathVariable Long userId) {
         NotificationPreferenceDto preferences = integrationService.getNotificationPreferences(userId.toString());
         return ResponseEntity.ok(new ApiResponse<>(true, "Notification preferences fetched successfully", preferences));
     }
@@ -73,7 +74,8 @@ public class UserIntegrationController {
     public ResponseEntity<ApiResponse<NotificationPreferenceDto>> updateNotificationPreferences(
             @PathVariable Long userId,
             @Valid @RequestBody NotificationPreferenceDto preferences) {
-        NotificationPreferenceDto updated = integrationService.updateNotificationPreferences(userId.toString(), preferences);
+        NotificationPreferenceDto updated = integrationService.updateNotificationPreferences(userId.toString(),
+                preferences);
         return ResponseEntity.ok(new ApiResponse<>(true, "Notification preferences updated successfully", updated));
     }
 

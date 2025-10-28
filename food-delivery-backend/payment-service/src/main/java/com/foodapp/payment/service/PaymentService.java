@@ -1,6 +1,6 @@
 package com.foodapp.payment.service;
 
-import com.foodapp.common.constants.AppConstants;
+// import com.foodapp.common.constants.AppConstants; // Removed common dependency
 import com.foodapp.payment.model.Payment;
 import com.foodapp.payment.model.PaymentTransaction;
 import com.foodapp.payment.repository.PaymentRepository;
@@ -48,8 +48,8 @@ public class PaymentService {
         // If payment successful, notify other services
         if (gatewayResponse.isSuccessful()) {
             // Send to original queue for backward compatibility
-            jmsTemplate.convertAndSend(AppConstants.PAYMENT_SUCCESS_QUEUE, transaction);
-            
+            jmsTemplate.convertAndSend("payment-success-queue", transaction);
+
             // Use new messaging system
             messagePublisher.publishPaymentSuccess(transaction);
             messagePublisher.notifyOrderService(transaction);
@@ -65,7 +65,7 @@ public class PaymentService {
     public PaymentTransaction processRefund(RefundRequest request) {
         // Validate refund request
         PaymentTransaction originalTransaction = paymentTransactionRepository.findById(request.getTransactionId())
-            .orElseThrow(() -> new RuntimeException("Transaction not found"));
+                .orElseThrow(() -> new RuntimeException("Transaction not found"));
 
         // Process refund with payment gateway
         RefundResponse refundResponse = processRefundWithGateway(originalTransaction, request);
@@ -96,13 +96,14 @@ public class PaymentService {
         // Implement refund processing logic
         return null;
     }
-    
+
     public String getPaymentStatus(String paymentId) {
         // Get payment status logic here
         return "COMPLETED";
     }
-    
-    public java.util.List<com.foodapp.payment.dto.PaymentResponse> processSplitPayment(java.util.List<Payment> payments, String groupOrderId) {
+
+    public java.util.List<com.foodapp.payment.dto.PaymentResponse> processSplitPayment(java.util.List<Payment> payments,
+            String groupOrderId) {
         // Process split payment logic here
         return payments.stream()
                 .map(payment -> {
@@ -114,18 +115,19 @@ public class PaymentService {
                 })
                 .toList();
     }
-    
-    public com.foodapp.payment.model.PaymentMethod addPaymentMethod(Long userId, com.foodapp.payment.model.PaymentMethod paymentMethod) {
+
+    public com.foodapp.payment.model.PaymentMethod addPaymentMethod(Long userId,
+            com.foodapp.payment.model.PaymentMethod paymentMethod) {
         // Add payment method logic here
         paymentMethod.setUserId(userId);
         return paymentMethod;
     }
-    
+
     public java.util.List<com.foodapp.payment.model.PaymentMethod> getUserPaymentMethods(Long userId) {
         // Get user payment methods logic here
         return java.util.List.of();
     }
-    
+
     public void removePaymentMethod(Long userId, String methodId) {
         // Remove payment method logic here
     }
@@ -141,8 +143,7 @@ public class PaymentService {
                     request.getAmount(),
                     request.getCurrency() != null ? request.getCurrency() : "usd",
                     customerId,
-                    "Order payment for order ID: " + request.getOrderId()
-            );
+                    "Order payment for order ID: " + request.getOrderId());
 
             // Create transaction record
             PaymentTransaction transaction = new PaymentTransaction();
@@ -155,14 +156,14 @@ public class PaymentService {
 
             paymentTransactionRepository.save(transaction);
 
-            log.info("Created Stripe payment transaction: {} for order: {}", 
+            log.info("Created Stripe payment transaction: {} for order: {}",
                     transaction.getId(), request.getOrderId());
 
             return transaction;
 
         } catch (StripeException e) {
             log.error("Error processing Stripe payment for order: {}", request.getOrderId(), e);
-            
+
             // Create failed transaction record
             PaymentTransaction failedTransaction = new PaymentTransaction();
             failedTransaction.setOrderId(request.getOrderId());
@@ -172,7 +173,7 @@ public class PaymentService {
             failedTransaction.setFailureReason(e.getMessage());
 
             paymentTransactionRepository.save(failedTransaction);
-            
+
             throw new RuntimeException("Payment processing failed: " + e.getMessage(), e);
         }
     }
@@ -191,12 +192,12 @@ public class PaymentService {
             paymentTransactionRepository.save(transaction);
 
             // Notify other services using new messaging system
-            jmsTemplate.convertAndSend(AppConstants.PAYMENT_SUCCESS_QUEUE, transaction);
+            jmsTemplate.convertAndSend("payment-success-queue", transaction);
             messagePublisher.publishPaymentSuccess(transaction);
             messagePublisher.notifyOrderService(transaction);
             messagePublisher.notifyDeliveryService(transaction);
-            
-            log.info("Payment completed for transaction: {} with Stripe PaymentIntent: {}", 
+
+            log.info("Payment completed for transaction: {} with Stripe PaymentIntent: {}",
                     transaction.getId(), paymentIntentId);
         } else {
             log.warn("No transaction found for Stripe PaymentIntent: {}", paymentIntentId);
@@ -220,8 +221,8 @@ public class PaymentService {
             // Notify other services about payment failure using new messaging system
             jmsTemplate.convertAndSend("payment.failure.queue", transaction);
             messagePublisher.notifyOrderService(transaction);
-            
-            log.error("Payment failed for transaction: {} with Stripe PaymentIntent: {}, reason: {}", 
+
+            log.error("Payment failed for transaction: {} with Stripe PaymentIntent: {}, reason: {}",
                     transaction.getId(), paymentIntentId, failureReason);
         } else {
             log.warn("No transaction found for failed Stripe PaymentIntent: {}", paymentIntentId);
@@ -243,8 +244,7 @@ public class PaymentService {
             com.stripe.model.Refund stripeRefund = stripePaymentService.createRefund(
                     originalTransaction.getGatewayTransactionId(),
                     request.getAmount(),
-                    request.getReason()
-            );
+                    request.getReason());
 
             // Create refund transaction record
             PaymentTransaction refundTransaction = new PaymentTransaction();
@@ -262,7 +262,7 @@ public class PaymentService {
             messagePublisher.publishRefundNotification(refundTransaction);
             messagePublisher.notifyOrderService(refundTransaction);
 
-            log.info("Stripe refund processed: {} for original transaction: {}", 
+            log.info("Stripe refund processed: {} for original transaction: {}",
                     refundTransaction.getId(), originalTransaction.getId());
 
             return refundTransaction;

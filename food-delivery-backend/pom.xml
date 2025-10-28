@@ -24,7 +24,6 @@
     </properties>
 
     <modules>
-        <module>common-library</module>
         <module>service-registry</module>
         <module>config-server</module>
         <module>api-gateway</module>
@@ -42,16 +41,8 @@
         <module>ai-service</module>
         <module>analytics-service</module>
         <module>driver-service</module>
-        <module>inventory-service</module>
-        <module>kitchen-service</module>
-        <module>loyalty-service</module>
-        <module>pricing-service</module>
-        <module>promotion-service</module>
-        <module>quality-service</module>
         <module>recommendation-service</module>
         <module>search-service</module>
-        <module>social-service</module>
-        <module>subscription-service</module>
         <module>tracking-service</module>
     </modules>
 

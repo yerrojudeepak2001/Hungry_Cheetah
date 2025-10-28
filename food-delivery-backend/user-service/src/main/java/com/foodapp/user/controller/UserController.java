@@ -1,11 +1,12 @@
 package com.foodapp.user.controller;
 
-import com.foodapp.common.dto.ApiResponse;
+import com.foodapp.user.dto.ApiResponse;
 import com.foodapp.user.model.User;
 import com.foodapp.user.service.UserService;
 import com.foodapp.user.dto.LoginRequest;
 import com.foodapp.user.dto.LoginResponse;
 import com.foodapp.user.dto.ForgotPasswordRequest;
+import com.foodapp.user.security.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
@@ -16,9 +17,11 @@ import java.time.LocalDateTime;
 public class UserController {
 
     private final UserService userService;
+    private final JwtUtil jwtUtil;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, JwtUtil jwtUtil) {
         this.userService = userService;
+        this.jwtUtil = jwtUtil;
     }
 
     // 🧍 User Management
@@ -33,36 +36,39 @@ public class UserController {
         try {
             // Authenticate user
             User authenticatedUser = userService.authenticateUser(
-                loginRequest.getEmail(), 
-                loginRequest.getPassword(),
-                loginRequest.getDeviceToken(),
-                loginRequest.getDeviceInfo()
-            );
+                    loginRequest.getEmail(),
+                    loginRequest.getPassword(),
+                    loginRequest.getDeviceToken(),
+                    loginRequest.getDeviceInfo());
 
             // Build login response
             LoginResponse loginResponse = LoginResponse.builder()
-                .userId(authenticatedUser.getId())
-                .username(authenticatedUser.getUsername())
-                .email(authenticatedUser.getEmail())
-                .firstName(authenticatedUser.getFirstName())
-                .lastName(authenticatedUser.getLastName())
-                .phone(authenticatedUser.getPhone())
-                .roles(authenticatedUser.getRoles())
-                .loginTime(LocalDateTime.now())
-                .isEmailVerified(authenticatedUser.getIsEmailVerified() != null ? authenticatedUser.getIsEmailVerified() : false)
-                .isPhoneVerified(authenticatedUser.getIsPhoneVerified() != null ? authenticatedUser.getIsPhoneVerified() : false)
-                .profilePicture(authenticatedUser.getProfilePicture())
-                .message("Login successful")
-                .build();
+                    .userId(authenticatedUser.getId())
+                    .username(authenticatedUser.getUsername())
+                    .email(authenticatedUser.getEmail())
+                    .firstName(authenticatedUser.getFirstName())
+                    .lastName(authenticatedUser.getLastName())
+                    .phone(authenticatedUser.getPhone())
+                    .roles(authenticatedUser.getRoles())
+                    .loginTime(LocalDateTime.now())
+                    .isEmailVerified(
+                            authenticatedUser.getIsEmailVerified() != null ? authenticatedUser.getIsEmailVerified()
+                                    : false)
+                    .isPhoneVerified(
+                            authenticatedUser.getIsPhoneVerified() != null ? authenticatedUser.getIsPhoneVerified()
+                                    : false)
+                    .profilePicture(authenticatedUser.getProfilePicture())
+                    .message("Login successful")
+                    .build();
 
             return ResponseEntity.ok(new ApiResponse<>(true, "Login successful", loginResponse));
-            
+
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
-                .body(new ApiResponse<>(false, e.getMessage(), null));
+                    .body(new ApiResponse<>(false, e.getMessage(), null));
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
-                .body(new ApiResponse<>(false, "Login failed: " + e.getMessage(), null));
+                    .body(new ApiResponse<>(false, "Login failed: " + e.getMessage(), null));
         }
     }
 
@@ -73,11 +79,11 @@ public class UserController {
             User user = userService.getUser(userId);
             user.setDeviceToken(null);
             userService.updateUser(userId, user);
-            
+
             return ResponseEntity.ok(new ApiResponse<>(true, "Logout successful", null));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
-                .body(new ApiResponse<>(false, "Logout failed: " + e.getMessage(), null));
+                    .body(new ApiResponse<>(false, "Logout failed: " + e.getMessage(), null));
         }
     }
 
@@ -88,17 +94,37 @@ public class UserController {
             if (user != null) {
                 // For security, always return success even if email doesn't exist
                 // This prevents email enumeration attacks
-                // In a real implementation, you would generate a reset token and send it via email
-                return ResponseEntity.ok(new ApiResponse<>(true, 
-                    "If the email exists in our system, you will receive a password reset link", null));
+                // In a real implementation, you would generate a reset token and send it via
+                // email
+                return ResponseEntity.ok(new ApiResponse<>(true,
+                        "If the email exists in our system, you will receive a password reset link", null));
             } else {
                 // Still return success for security
-                return ResponseEntity.ok(new ApiResponse<>(true, 
-                    "If the email exists in our system, you will receive a password reset link", null));
+                return ResponseEntity.ok(new ApiResponse<>(true,
+                        "If the email exists in our system, you will receive a password reset link", null));
             }
         } catch (Exception e) {
-            return ResponseEntity.ok(new ApiResponse<>(true, 
-                "If the email exists in our system, you will receive a password reset link", null));
+            return ResponseEntity.ok(new ApiResponse<>(true,
+                    "If the email exists in our system, you will receive a password reset link", null));
+        }
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<ApiResponse<?>> getCurrentUserProfile(
+            @RequestHeader(value = "X-User-Id", required = false) String userIdHeader,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
+        try {
+            String userId = jwtUtil.getUserIdFromHeaders(authToken, userIdHeader);
+            if (userId == null) {
+                return ResponseEntity.status(401)
+                        .body(new ApiResponse<>(false, "Unauthorized", null));
+            }
+
+            var user = userService.getUser(Long.parseLong(userId));
+            return ResponseEntity.ok(new ApiResponse<>(true, "User profile fetched successfully", user));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse<>(false, "Failed to fetch user profile: " + e.getMessage(), null));
         }
     }
 
@@ -111,14 +137,23 @@ public class UserController {
     @PutMapping("/{userId}")
     public ResponseEntity<ApiResponse<?>> updateUserProfile(
             @PathVariable Long userId,
-            @RequestBody User user) {
-        var updatedUser = userService.updateUser(userId, user);
-        return ResponseEntity.ok(new ApiResponse<>(true, "User profile updated successfully", updatedUser));
+            @RequestBody User user,
+            @RequestHeader(value = "X-User-Id", required = false) String userIdHeader,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
+        try {
+            String currentUserId = jwtUtil.getUserIdFromHeaders(authToken, userIdHeader);
+            if (currentUserId == null || !currentUserId.equals(userId.toString())) {
+                return ResponseEntity.status(403)
+                        .body(new ApiResponse<>(false, "Forbidden: Cannot update other user's profile", null));
+            }
+
+            var updatedUser = userService.updateUser(userId, user);
+            return ResponseEntity.ok(new ApiResponse<>(true, "User profile updated successfully", updatedUser));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse<>(false, "Failed to update user profile: " + e.getMessage(), null));
+        }
     }
-
-
-
-
 
     // 📊 User Stats and History
     @GetMapping("/{userId}/order-history")

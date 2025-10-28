@@ -2,10 +2,12 @@ package com.foodapp.auth.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,9 +19,9 @@ public class JwtTokenProvider {
     private final long tokenValidityInMilliseconds;
 
     public JwtTokenProvider(
-            @Value("${jwt.secret:34510220d4bf1609c88acb0256b07a2e}") String secret,
+            @Value("${jwt.secret:34510220d4bf1609c88acb0256b07a2e4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b}") String secret,
             @Value("${jwt.expiration:86400000}") long tokenValidityInMilliseconds) {
-        this.secretKey = Jwts.SIG.HS256.key().build();
+        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.tokenValidityInMilliseconds = tokenValidityInMilliseconds;
     }
 

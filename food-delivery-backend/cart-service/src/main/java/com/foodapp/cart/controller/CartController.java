@@ -1,12 +1,13 @@
 package com.foodapp.cart.controller;
 
-import com.foodapp.common.dto.ApiResponse;
+import com.foodapp.cart.dto.ApiResponse;
 import com.foodapp.cart.entity.Cart;
 import com.foodapp.cart.entity.CartItem;
 import com.foodapp.cart.service.CartService;
 import com.foodapp.cart.service.CartValidationService;
 import com.foodapp.cart.dto.CartItemUpdate;
 import com.foodapp.cart.dto.MultiRestaurantCartItem;
+import com.foodapp.cart.security.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,45 +16,129 @@ import org.springframework.web.bind.annotation.*;
 public class CartController {
     private final CartService cartService;
     private final CartValidationService validationService;
+    private final JwtUtil jwtUtil;
 
-    public CartController(CartService cartService, CartValidationService validationService) {
+    public CartController(CartService cartService, CartValidationService validationService, JwtUtil jwtUtil) {
         this.cartService = cartService;
         this.validationService = validationService;
+        this.jwtUtil = jwtUtil;
     }
 
     // Cart Management
-    @PostMapping("/{userId}")
-    public ResponseEntity<ApiResponse<?>> createCart(
-            @PathVariable Long userId,
-            @RequestBody CartItem item) {
-        var cart = cartService.addToCart(userId, item);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Item added to cart successfully", cart));
+    @PostMapping("/add")
+    public ResponseEntity<ApiResponse<?>> addToCart(
+            @RequestBody CartItem item,
+            @RequestHeader(value = "X-User-Id", required = false) String userIdHeader,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
+            @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
+        try {
+            // Extract token from Authorization header if available
+            String token = authToken;
+            if (token == null && authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                token = authorizationHeader.substring(7);
+            }
+
+            String userId = jwtUtil.getUserIdFromHeaders(token, userIdHeader);
+
+            if (userId == null) {
+                return ResponseEntity.status(401)
+                        .body(new ApiResponse<>(false, "Unauthorized", null));
+            }
+
+            cartService.addToCart(Long.parseLong(userId), item);
+            return ResponseEntity.ok(new ApiResponse<>(true, "Item added to cart successfully", null));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse<>(false, "Failed to add item to cart: " + e.getMessage(), null));
+        }
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<ApiResponse<?>> getCart(@PathVariable Long userId) {
-        var cart = cartService.getCart(userId);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Cart fetched successfully", cart));
+    @GetMapping("/my-cart")
+    public ResponseEntity<ApiResponse<?>> getMyCart(
+            @RequestHeader(value = "X-User-Id", required = false) String userIdHeader,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
+            @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
+        try {
+            // Extract token from Authorization header if available
+            String token = authToken;
+            if (token == null && authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                token = authorizationHeader.substring(7);
+            }
+
+            String userId = jwtUtil.getUserIdFromHeaders(token, userIdHeader);
+            if (userId == null) {
+                return ResponseEntity.status(401)
+                        .body(new ApiResponse<>(false, "Unauthorized", null));
+            }
+
+            var cart = cartService.getCart(Long.parseLong(userId));
+            return ResponseEntity.ok(new ApiResponse<>(true, "Cart fetched successfully", cart));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse<>(false, "Failed to fetch cart: " + e.getMessage(), null));
+        }
     }
 
     @PutMapping("/{userId}/items/{itemId}")
     public ResponseEntity<ApiResponse<?>> updateCartItem(
             @PathVariable Long userId,
             @PathVariable Long itemId,
-            @RequestBody CartItemUpdate update) {
-        var updated = cartService.updateCartItem(String.valueOf(userId), itemId, update);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Cart item updated successfully", updated));
+            @RequestBody CartItemUpdate update,
+            @RequestHeader(value = "X-User-Id", required = false) String userIdHeader,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
+            @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
+        try {
+            // Extract token from Authorization header if available
+            String token = authToken;
+            if (token == null && authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                token = authorizationHeader.substring(7);
+            }
+
+            String authenticatedUserId = jwtUtil.getUserIdFromHeaders(token, userIdHeader);
+            if (authenticatedUserId == null) {
+                return ResponseEntity.status(401)
+                        .body(new ApiResponse<>(false, "Unauthorized", null));
+            }
+
+            // Use the authenticated user ID instead of path parameter for security
+            var updated = cartService.updateCartItem(authenticatedUserId, itemId, update);
+            return ResponseEntity.ok(new ApiResponse<>(true, "Cart item updated successfully", updated));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse<>(false, "Failed to update cart item: " + e.getMessage(), null));
+        }
     }
 
     @DeleteMapping("/{userId}/items/{itemId}")
     public ResponseEntity<ApiResponse<?>> removeCartItem(
             @PathVariable Long userId,
-            @PathVariable Long itemId) {
-        cartService.removeFromCart(userId, itemId);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Item removed from cart successfully", null));
-    }
+            @PathVariable Long itemId,
+            @RequestHeader(value = "X-User-Id", required = false) String userIdHeader,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
+            @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
+        try {
+            // Extract token from Authorization header if available
+            String token = authToken;
+            if (token == null && authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                token = authorizationHeader.substring(7);
+            }
 
-    // Cart Validation
+            String authenticatedUserId = jwtUtil.getUserIdFromHeaders(token, userIdHeader);
+
+            if (authenticatedUserId == null) {
+                return ResponseEntity.status(401)
+                        .body(new ApiResponse<>(false, "Unauthorized", null));
+            }
+
+            // Use the authenticated user ID instead of path parameter for security
+            cartService.removeFromCart(Long.parseLong(authenticatedUserId), itemId);
+            return ResponseEntity.ok(new ApiResponse<>(true, "Item removed from cart successfully", null));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse<>(false, "Failed to remove item from cart: " + e.getMessage(), null));
+        }
+    } // Cart Validation
+
     @PostMapping("/{userId}/validate")
     public ResponseEntity<ApiResponse<?>> validateCart(@PathVariable Long userId) {
         cartService.validateCartItems(String.valueOf(userId));

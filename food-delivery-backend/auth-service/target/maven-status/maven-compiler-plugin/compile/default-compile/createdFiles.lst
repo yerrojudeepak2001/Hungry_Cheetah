@@ -1,6 +1,7 @@
 com\foodapp\auth\dto\LoginRequest.class
 com\foodapp\auth\model\User.class
 com\foodapp\auth\service\JwtService.class
+com\foodapp\auth\dto\LoginResponse.class
 com\foodapp\auth\dto\RegisterRequest.class
 com\foodapp\auth\config\SecurityConfig.class
 com\foodapp\auth\dto\FraudCheckRequest.class
