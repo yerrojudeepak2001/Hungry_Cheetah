@@ -58,11 +58,43 @@ public class RouterConfig {
                         .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
                         .uri("lb://CART-SERVICE"))
 
-                // AI Service
+//                // AI Service
+//                .route("ai-service", r -> r
+//                        .path("/api/ai/**")
+//                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
+//                        .uri("lb://AI-SERVICE"))
+                // In your Gateway configuration class
                 .route("ai-service", r -> r
                         .path("/api/ai/**")
-                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
-                        .uri("lb://AI-SERVICE"))
+                        .filters(f -> f
+                                // Validate JWT in the gateway
+                                .filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config()))
+
+                                // Remove unnecessary headers (optional)
+                                .removeRequestHeader("Cookie")
+
+                                // Rewrite path if needed (optional)
+                                .rewritePath("/api/ai/(?<segment>.*)", "/api/ai/${segment}")
+
+                                // Preserve host header
+                                .preserveHostHeader()
+
+                                // Forward Authorization header to AI service
+                                .filter((exchange, chain) -> {
+                                    String authHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
+                                    if (authHeader != null) {
+                                        exchange.getRequest()
+                                                .mutate()
+                                                .header("Authorization", authHeader)
+                                                .build();
+                                    }
+                                    return chain.filter(exchange);
+                                })
+                        )
+                        .uri("lb://AI-SERVICE") // Load-balanced service name registered in Eureka
+                )
+
+
 
                 // Search Service
                 .route("search-service", r -> r

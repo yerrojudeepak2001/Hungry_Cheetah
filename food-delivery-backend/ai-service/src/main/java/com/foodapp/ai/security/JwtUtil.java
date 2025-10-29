@@ -1,4 +1,4 @@
-package com.foodapp.aiservice.security;
+package com.foodapp.ai.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

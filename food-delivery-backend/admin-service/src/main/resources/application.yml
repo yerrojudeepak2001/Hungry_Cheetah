@@ -9,6 +9,12 @@ spring:
     username: teamuser
     password: password123
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10       # Limit total active connections
+      minimum-idle: 5             # Keep 5 idle connections ready
+      idle-timeout: 30000         # 30 seconds idle before releasing
+      max-lifetime: 1800000       # Recycle connections every 30 mins
+      connection-timeout: 20000   # Wait up to 20 sec for a connection
   jpa:
     hibernate:
       ddl-auto: update
