@@ -5,18 +5,25 @@ spring:
   application:
     name: driver-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/foodapp_drivers
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:mysql://100.122.144.43:3306/food_app?createDatabaseIfNotExist=true&useSSL=false
+    username: teamuser
+    password: team123
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-  kafka:
-    bootstrap-servers: localhost:9092
-    consumer:
-      group-id: driver-service-group
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  activemq:
+    broker-url: tcp:// 100.122.144.43:61616
+    user: Deepak
+    password: Deepak123
+    pool:
+      enabled: true
+      max-connections: 50
 
 
 driver:
@@ -44,19 +51,6 @@ feign:
         connectTimeout: 5000
         readTimeout: 5000
         loggerLevel: full
-  circuitbreaker:
-    enabled: true
-
-resilience4j:
-  circuitbreaker:
-    instances:
-      locationService:
-        minimumNumberOfCalls: 5
-        failureRateThreshold: 50
-  bulkhead:
-    instances:
-      driverAssignment:
-        maxConcurrentCalls: 20
 
 management:
   endpoints:

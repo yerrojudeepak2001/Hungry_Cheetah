@@ -23,11 +23,13 @@ public class MultiRestaurantOrder {
     private String status; // PROCESSING, CONFIRMED, IN_DELIVERY, COMPLETED
     
     // Sub-Orders
+    @Transient  // Cannot directly map complex Map to database, use separate entity or JSON
     private Map<Long, RestaurantSubOrder> restaurantOrders; // restaurantId -> order
     private Integer totalRestaurants;
     
     // Delivery
     private String deliveryAddress;
+    @Transient  // Use separate entity
     private List<DeliveryBatch> deliveryBatches;
     private String consolidationPoint; // For multi-pickup consolidation
     private Boolean requiresConsolidation;
@@ -38,17 +40,28 @@ public class MultiRestaurantOrder {
     private BigDecimal platformFee;
     private BigDecimal taxes;
     private BigDecimal totalAmount;
+    
+    @ElementCollection
+    @CollectionTable(name = "multi_restaurant_order_subtotals", joinColumns = @JoinColumn(name = "order_id"))
+    @MapKeyColumn(name = "restaurant_id")
+    @Column(name = "subtotal_amount")
     private Map<Long, BigDecimal> restaurantSubtotals;
     
     // Optimization
     private Boolean isOptimizedRoute;
     private String routeOptimizationStrategy;
+    
+    @ElementCollection
+    @CollectionTable(name = "multi_restaurant_order_times", joinColumns = @JoinColumn(name = "order_id"))
+    @MapKeyColumn(name = "time_key")
+    @Column(name = "time_value")
     private Map<String, Integer> estimatedTimes;
     
     @Data
     public static class RestaurantSubOrder {
         private Long restaurantId;
         private String status;
+        @Transient
         private List<OrderItem> items;
         private BigDecimal subtotal;
         private LocalDateTime preparationStartTime;

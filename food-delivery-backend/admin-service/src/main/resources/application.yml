@@ -3,35 +3,44 @@ server:
 
 spring:
   application:
-    name: admin-service
+    name: ADMIN-SERVICE
   datasource:
-    url: jdbc:postgresql://localhost:5432/foodapp_admin
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:mysql://100.122.144.43:3306/food_app
+    username: teamuser
+    password: password123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10       # Limit total active connections
+      minimum-idle: 5             # Keep 5 idle connections ready
+      idle-timeout: 30000         # 30 seconds idle before releasing
+      max-lifetime: 1800000       # Recycle connections every 30 mins
+      connection-timeout: 20000   # Wait up to 20 sec for a connection
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-  kafka:
-    bootstrap-servers: localhost:9092
-    consumer:
-      group-id: admin-service-group
-  redis:
-    host: localhost
-    port: 6379
-    password: ${REDIS_PASSWORD}
-
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: Deepak
+    password: Deepak123
+    pool:
+      enabled: true
+      max-connections: 50
   cloud:
-      config:
-        enabled: false
+    config:
+      enabled: false
+  config:
+    import: optional:configserver:http://localhost:8888
+  security:
+    user:
+      password: # Disable default password generation
 
+
+services:
+  auth-service:
+    url: ${AUTH_SERVICE_URL:http://localhost:8080}
 
 admin:
-  security:
-    jwt:
-      secret: ${ADMIN_JWT_SECRET}
-      expiration: 28800 # 8 hours
   audit:
     enabled: true
     retention: 90 # days
@@ -52,20 +61,6 @@ feign:
         connectTimeout: 5000
         readTimeout: 5000
         loggerLevel: full
-  circuitbreaker:
-    enabled: true
-
-resilience4j:
-  circuitbreaker:
-    instances:
-      userManagement:
-        minimumNumberOfCalls: 5
-        failureRateThreshold: 50
-  ratelimiter:
-    instances:
-      adminOperations:
-        limitForPeriod: 100
-        limitRefreshPeriod: 1m
 
 management:
   endpoints:

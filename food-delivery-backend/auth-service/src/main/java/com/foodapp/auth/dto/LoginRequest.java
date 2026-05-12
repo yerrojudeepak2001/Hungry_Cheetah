@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 public class LoginRequest {
     @NotBlank(message = "Username is required")
     private String username;
+    @NotBlank(message = "email is required")
+    private String email;
     
     @NotBlank(message = "Password is required")
     private String password;
@@ -44,5 +46,13 @@ public class LoginRequest {
 
     public void setRememberMe(Boolean rememberMe) {
         this.rememberMe = rememberMe;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

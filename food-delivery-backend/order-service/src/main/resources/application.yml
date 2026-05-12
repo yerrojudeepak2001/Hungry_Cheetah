@@ -4,10 +4,60 @@ server:
 spring:
   application:
     name: ORDER-SERVICE
+  # MySQL Database Configuration
+  datasource:
+    url: jdbc:mysql://100.122.144.43:3306/food_app
+    username: teamuser
+    password: password123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  # Config Server (optional)
+  config:
+    import: optional:configserver:http://localhost:8888
   cloud:
+    config:
+      enabled: false
+      server:
+        git:
+          uri: https://github.com/yerrojudeepak2001/Hungry_Cheetah.git
+          clone-on-start: true
     loadbalancer:
       ribbon:
         enabled: false
+  
+  # Email Configuration
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: hungrycheetah62@gmail.com
+    password: feat seix sqbb lvhz
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            trust: smtp.gmail.com
+  
+  # ActiveMQ Configuration
+  
+  activemq:
+    broker-url: tcp://100.122.144.43:61616
+    user: Deepak
+    password: Deepak123
+    pool:
+      enabled: true
+      max-connections: 50
+  
+  # MongoDB Configuration for order analytics and logs
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/food_app_orders
 
 eureka:
   client:

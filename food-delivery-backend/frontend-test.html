@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Delivery Backend Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .success {
+            color: #28a745;
+            background: #d4edda;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border-left: 4px solid #007bff;
+        }
+        .endpoint-list {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍕 Food Delivery Backend Connection Test</h1>
+        <p>Test the connection between your frontend (port 3000) and the Food Delivery backend services.</p>
+
+        <div class="endpoint-list">
+            <h3>Available Services:</h3>
+            <ul>
+                <li><strong>Auth Service:</strong> http://localhost:8082</li>
+                <li><strong>User Service:</strong> http://localhost:8083</li>
+                <li><strong>Admin Service:</strong> http://localhost:8099</li>
+                <li><strong>Service Registry:</strong> http://localhost:8761</li>
+            </ul>
+        </div>
+
+        <!-- Connection Test -->
+        <div class="test-section">
+            <h3>1. Basic Connection Test</h3>
+            <p>Test if the backend is reachable from your frontend.</p>
+            <button onclick="testConnection()">Test Connection</button>
+            <div id="connectionResult"></div>
+        </div>
+
+        <!-- Health Check -->
+        <div class="test-section">
+            <h3>2. Health Check</h3>
+            <p>Check if the Auth Service is healthy and responding.</p>
+            <button onclick="testHealth()">Check Health</button>
+            <div id="healthResult"></div>
+        </div>
+
+        <!-- Registration Test -->
+        <div class="test-section">
+            <h3>3. User Registration Test</h3>
+            <p>Test user registration endpoint with sample data.</p>
+            <button onclick="testRegistration()">Test Registration</button>
+            <div id="registrationResult"></div>
+        </div>
+
+        <!-- Login Test -->
+        <div class="test-section">
+            <h3>4. User Login Test</h3>
+            <p>Test user login with the registered user.</p>
+            <button onclick="testLogin()">Test Login</button>
+            <div id="loginResult"></div>
+        </div>
+
+        <!-- User Info Test -->
+        <div class="test-section">
+            <h3>5. Get User Info Test</h3>
+            <p>Test getting user info with JWT token (login first).</p>
+            <button onclick="testUserInfo()">Get User Info</button>
+            <div id="userInfoResult"></div>
+        </div>
+
+        <!-- Clear Results -->
+        <div class="test-section">
+            <button onclick="clearResults()" style="background: #6c757d;">Clear All Results</button>
+        </div>
+    </div>
+
+    <script>
+        let authToken = null;
+
+        // Test basic connection
+        async function testConnection() {
+            const resultDiv = document.getElementById('connectionResult');
+            try {
+                const response = await fetch('http://localhost:8082/api/test/connection', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ Connection successful!
+                        </div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Connection failed: ${error.message}
+                        <br>Make sure the Auth Service is running on port 8082
+                    </div>
+                `;
+            }
+        }
+
+        // Test health endpoint
+        async function testHealth() {
+            const resultDiv = document.getElementById('healthResult');
+            try {
+                const response = await fetch('http://localhost:8082/api/test/health', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ Service is healthy!
+                        </div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Health check failed: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Test user registration
+        async function testRegistration() {
+            const resultDiv = document.getElementById('registrationResult');
+            const testUser = {
+                username: `testuser_${Date.now()}`,
+                password: "SecurePass123!",
+                email: `test_${Date.now()}@example.com`,
+                firstName: "Test",
+                lastName: "User"
+            };
+
+            try {
+                const response = await fetch('http://localhost:8082/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(testUser)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    authToken = data.data; // Store JWT token
+                    localStorage.setItem('testAuthToken', authToken);
+                    
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ Registration successful!
+                            <br>Username: ${testUser.username}
+                            <br>JWT Token stored for subsequent tests
+                        </div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(`HTTP ${response.status}: ${JSON.stringify(errorData)}`);
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Registration failed: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Test user login
+        async function testLogin() {
+            const resultDiv = document.getElementById('loginResult');
+            // Use a known test user for login
+            const loginData = {
+                username: "testuser",
+                password: "SecurePass123!"
+            };
+
+            try {
+                const response = await fetch('http://localhost:8082/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(loginData)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    authToken = data.data;
+                    localStorage.setItem('testAuthToken', authToken);
+                    
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ Login successful!
+                            <br>JWT Token received and stored
+                        </div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(`HTTP ${response.status}: ${JSON.stringify(errorData)}`);
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Login failed: ${error.message}
+                        <br>Try registering a user first, or check if the credentials are correct.
+                    </div>
+                `;
+            }
+        }
+
+        // Test get user info (requires token)
+        async function testUserInfo() {
+            const resultDiv = document.getElementById('userInfoResult');
+            const token = authToken || localStorage.getItem('testAuthToken');
+
+            if (!token) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        ❌ No auth token found. Please login first.
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:8082/api/auth/userinfo', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ User info retrieved successfully!
+                        </div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(`HTTP ${response.status}: ${JSON.stringify(errorData)}`);
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Failed to get user info: ${error.message}
+                        <br>The token might be expired or invalid.
+                    </div>
+                `;
+            }
+        }
+
+        // Clear all results
+        function clearResults() {
+            const resultDivs = ['connectionResult', 'healthResult', 'registrationResult', 'loginResult', 'userInfoResult'];
+            resultDivs.forEach(id => {
+                document.getElementById(id).innerHTML = '';
+            });
+            authToken = null;
+            localStorage.removeItem('testAuthToken');
+        }
+
+        // Auto-load token on page load
+        window.onload = function() {
+            const storedToken = localStorage.getItem('testAuthToken');
+            if (storedToken) {
+                authToken = storedToken;
+                console.log('Loaded stored auth token');
+            }
+        };
+    </script>
+</body>
+</html>

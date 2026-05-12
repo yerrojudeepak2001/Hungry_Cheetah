@@ -4,6 +4,15 @@ server:
 spring:
   application:
     name: DELIVERY-SERVICE
+  datasource:
+    url: jdbc:mysql://100.122.144.43:3306/food_app
+    username: teamuser
+    password: password123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
   cloud:
     loadbalancer:
       ribbon:
@@ -17,3 +26,11 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     prefer-ip-address: true
+
+google:
+  maps:
+    api-key: AIzaSyDeaFOC5U_mYizecc8UbFIjhYgoUJWrbEc
+    routes:
+      url: https://routes.googleapis.com/directions/v2:computeRoutes
+    distance-matrix:
+      url: https://maps.googleapis.com/maps/api/distancematrix/json

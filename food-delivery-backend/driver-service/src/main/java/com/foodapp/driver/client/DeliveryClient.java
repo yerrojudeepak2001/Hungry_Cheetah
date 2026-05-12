@@ -4,6 +4,10 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import com.foodapp.driver.dto.DeliveryAssignment;
 import com.foodapp.driver.dto.DeliveryStatus;
+import com.foodapp.driver.dto.DriverAvailability;
+import com.foodapp.driver.dto.RoutePoint;
+import com.foodapp.driver.client.fallback.DeliveryClientFallback;
+import java.util.List;
 
 @FeignClient(name = "DELIVERY-SERVICE", fallback = DeliveryClientFallback.class)
 public interface DeliveryClient {

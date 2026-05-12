@@ -1,6 +1,5 @@
 package com.foodapp.order.dto;
 
-import com.foodapp.common.dto.DeliveryAddressDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,7 +26,7 @@ public class OrderDTO {
     private String paymentMethod;
     private Boolean isGroupOrder;
     private String specialInstructions;
-    
+
     // Used for order creation
     private String promoCode;
     private String deliveryPreference;

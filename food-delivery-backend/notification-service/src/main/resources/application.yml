@@ -5,18 +5,42 @@ spring:
   application:
     name: notification-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/foodapp_notifications
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:mysql://100.122.144.43:3306/food_app?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: teamuser
+    password: password123
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-  kafka:
-    bootstrap-servers: localhost:9092
-    consumer:
-      group-id: notification-service-group
+    database-platform: org.hibernate.dialect.MySQLDialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+  
+  activemq:
+    broker-url: tcp://100.122.144.43:61616
+    user: Deepak
+    password: Deepak123
+    pool:
+      enabled: true
+      max-connections: 50
+  
+  # Email Configuration
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: hungrycheetah62@gmail.com
+    password: feat seix sqbb lvhz
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            trust: smtp.gmail.com
 
 
 notification:
@@ -24,20 +48,20 @@ notification:
     email:
       enabled: true
       smtp:
-        host: ${SMTP_HOST}
-        port: ${SMTP_PORT}
-        username: ${SMTP_USERNAME}
-        password: ${SMTP_PASSWORD}
+        host: smtp.gmail.com
+        port: 587
+        username: hungrycheetah62@gmail.com
+        password: feat seix sqbb lvhz
     sms:
       enabled: true
       twilio:
-        account-sid: ${TWILIO_ACCOUNT_SID}
-        auth-token: ${TWILIO_AUTH_TOKEN}
-        phone-number: ${TWILIO_PHONE_NUMBER}
+        account-sid: ${TWILIO_ACCOUNT_SID:}
+        auth-token: ${TWILIO_AUTH_TOKEN:}
+        phone-number: ${TWILIO_PHONE_NUMBER:}
     push:
       enabled: true
       firebase:
-        config-path: ${FIREBASE_CONFIG_PATH}
+        config-path: ${FIREBASE_CONFIG_PATH:}
   templates:
     cache-ttl: 3600 # 1 hour
   retry:
@@ -59,15 +83,6 @@ feign:
         connectTimeout: 5000
         readTimeout: 5000
         loggerLevel: full
-  circuitbreaker:
-    enabled: true
-
-resilience4j:
-  circuitbreaker:
-    instances:
-      emailProvider:
-        minimumNumberOfCalls: 5
-        failureRateThreshold: 50
       smsProvider:
         minimumNumberOfCalls: 5
         failureRateThreshold: 50

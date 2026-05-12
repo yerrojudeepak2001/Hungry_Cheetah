@@ -3,6 +3,8 @@ package com.foodapp.payment.client;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import com.foodapp.payment.dto.UserPaymentInfo;
+import com.foodapp.payment.model.PaymentMethod;
+import java.util.List;
 
 @FeignClient(name = "USER-SERVICE")
 public interface UserClient {

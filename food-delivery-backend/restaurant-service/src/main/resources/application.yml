@@ -1,13 +1,61 @@
 server:
-  port: 8082
+  port: 8087
 
 spring:
   application:
     name: RESTAURANT-SERVICE
+  # MySQL Configuration for structured data (Restaurant, MenuItem, etc.)
+  datasource:
+    url: jdbc:mysql://100.122.144.43:3306/food_app
+    username: teamuser
+    password: password123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  # MongoDB Configuration for flexible data (Reviews, AR Menus, Virtual Tours)
+  #data:
+    #mongodb:
+    #  uri: mongodb+srv://foodapp_user:FoodApp123@cluster0.vma43un.mongodb.net/food_delivery?retryWrites=true&w=majority&appName=Cluster0
+
+      # Alternative configuration:
+      # host: localhost
+      # port: 27017
+      # database: restaurant_service
+      # username: mongouser
+      # password: mongopassword
+      # authentication-database: admin
   cloud:
     loadbalancer:
       ribbon:
         enabled: false
+  
+  # Email Configuration
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: hungrycheetah62@gmail.com
+    password: feat seix sqbb lvhz
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            trust: smtp.gmail.com
+  
+  # ActiveMQ Configuration
+  
+  activemq:
+    broker-url: tcp://100.122.144.43:61616
+    user: Deepak
+    password: Deepak123
+    pool:
+      enabled: true
+      max-connections: 50
 
 eureka:
   client:

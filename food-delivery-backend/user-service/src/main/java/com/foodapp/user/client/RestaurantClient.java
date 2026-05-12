@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.foodapp.user.dto.RestaurantResponse;
 import java.util.List;
 
-@FeignClient(name = "RESTAURANT-SERVICE")
+@FeignClient(name = "RESTAURANT-SERVICE", fallback = RestaurantClientFallback.class)
 public interface RestaurantClient {
 
     // Get favorite restaurants

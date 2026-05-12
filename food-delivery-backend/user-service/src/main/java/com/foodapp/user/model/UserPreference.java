@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.util.Set;
 
 @Data
@@ -16,6 +17,7 @@ public class UserPreference {
     private Long id;
     
     @OneToOne
+    @JsonBackReference
     private User user;
     
     @ElementCollection

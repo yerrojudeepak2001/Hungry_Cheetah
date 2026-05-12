@@ -1,6 +1,7 @@
 package com.foodapp.delivery.repository;
 
 import com.foodapp.delivery.model.Delivery;
+import com.foodapp.delivery.model.DeliveryStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;

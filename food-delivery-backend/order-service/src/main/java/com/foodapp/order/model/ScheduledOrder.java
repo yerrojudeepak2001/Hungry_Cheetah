@@ -27,10 +27,14 @@ public class ScheduledOrder {
     private LocalDateTime scheduledAt;
     private Boolean isRecurring;
     private String recurrencePattern; // DAILY, WEEKLY, MONTHLY
+    @ElementCollection
+    @CollectionTable(name = "scheduled_order_recurring_days", joinColumns = @JoinColumn(name = "scheduled_order_id"))
+    @Column(name = "day_name")
     private List<String> recurringDays;
     private LocalDateTime recurrenceEndDate;
     
     // Order Details
+    @Transient  // Use separate entity for order items
     private List<OrderItem> items;
     private BigDecimal totalAmount;
     private String deliveryAddress;

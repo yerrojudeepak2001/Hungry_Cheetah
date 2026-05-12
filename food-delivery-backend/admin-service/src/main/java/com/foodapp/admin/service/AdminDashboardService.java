@@ -3,12 +3,8 @@ package com.foodapp.admin.service;
 import com.foodapp.admin.dto.DashboardStats;
 import com.foodapp.admin.dto.SystemHealthDTO;
 import com.foodapp.admin.dto.AuditLogDTO;
-import com.foodapp.admin.client.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.cache.CacheManager;
 import java.util.*;
 
 @Service
@@ -22,7 +18,6 @@ public class AdminDashboardService {
     private final PaymentServiceClient paymentServiceClient;
     private final AnalyticsServiceClient analyticsServiceClient;
     private final MonitoringService monitoringService;
-    private final CacheManager cacheManager;
     
     public DashboardStats getDashboardStats() {
         DashboardStats stats = new DashboardStats();
@@ -47,9 +42,6 @@ public class AdminDashboardService {
         userServiceClient.clearCache();
         restaurantServiceClient.clearCache();
         deliveryServiceClient.clearCache();
-        // Clear local caches
-        cacheManager.getCacheNames()
-            .forEach(cacheName -> cacheManager.getCache(cacheName).clear());
     }
     
     public List<AuditLogDTO> getAuditLogs(String service, String action, 

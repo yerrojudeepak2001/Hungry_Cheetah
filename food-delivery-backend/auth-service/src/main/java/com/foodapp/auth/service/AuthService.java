@@ -1,11 +1,12 @@
 package com.foodapp.auth.service;
 
+import com.foodapp.auth.dto.TokenValidationResponse;
 import com.foodapp.auth.model.User;
 import com.foodapp.auth.repository.UserRepository;
 import com.foodapp.auth.dto.RegisterRequest;
 import com.foodapp.auth.dto.LoginRequest;
 import java.util.Set;
-import com.foodapp.common.security.JwtTokenProvider;
+import com.foodapp.auth.config.JwtTokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,8 +50,8 @@ public class AuthService {
     }
 
     public String login(LoginRequest request) {
-        User user = userRepository.findByUsername(request.getUsername())
-            .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
@@ -70,5 +71,30 @@ public class AuthService {
 
     public void logout(String token) {
         // Invalidate token (add to blacklist if implemented)
+    }
+    
+    public boolean validateToken(String token) {
+        return jwtTokenProvider.validateToken(token);
+    }
+    
+    public TokenValidationResponse getUserInfo(String token) {
+        if (!validateToken(token)) {
+            throw new RuntimeException("Invalid token");
+        }
+        
+        String username = jwtTokenProvider.getUsernameFromToken(token);
+        return getUserInfoByUsername(username);
+    }
+    
+    public TokenValidationResponse getUserInfoByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+            
+        return new TokenValidationResponse(
+            user.getUsername(),
+            user.getEmail(),
+            user.getRoles(),
+            user.getId().toString()
+        );
     }
 }

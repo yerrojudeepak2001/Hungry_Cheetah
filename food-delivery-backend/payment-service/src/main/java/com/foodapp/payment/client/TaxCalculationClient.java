@@ -2,7 +2,8 @@ package com.foodapp.payment.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
-import com.foodapp.payment.dto.TaxCalculationRequest;
+import com.foodapp.payment.dto.*;
+import java.util.List;
 
 @FeignClient(name = "TAX-SERVICE", fallback = TaxCalculationClientFallback.class)
 public interface TaxCalculationClient {

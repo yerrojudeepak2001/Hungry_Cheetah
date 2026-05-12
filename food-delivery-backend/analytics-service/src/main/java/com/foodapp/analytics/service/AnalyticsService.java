@@ -1,81 +1,91 @@
 package com.foodapp.analytics.service;
 
-import com.foodapp.analytics.model.OrderAnalytics;
-import com.foodapp.analytics.repository.OrderAnalyticsRepository;
-import com.foodapp.analytics.dto.AnalyticsResponse;
+import com.foodapp.analytics.dto.*;
 import com.foodapp.analytics.mapper.AnalyticsMapper;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.SparkSession;
-import org.springframework.kafka.annotation.KafkaListener;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 public class AnalyticsService {
-    private final OrderAnalyticsRepository analyticsRepository;
     private final AnalyticsMapper analyticsMapper;
-    private final SparkSession sparkSession;
-    private final ElasticsearchService elasticsearchService;
 
-    @KafkaListener(topics = "order-events", groupId = "analytics-group")
-    public void processOrderEvent(OrderDTO orderDTO) {
-        OrderAnalytics analytics = analyticsMapper.toAnalytics(orderDTO);
-        enrichAnalyticsData(analytics);
-        analyticsRepository.save(analytics);
-        updateRealTimeMetrics(analytics);
+    public AnalyticsService(AnalyticsMapper analyticsMapper) {
+        this.analyticsMapper = analyticsMapper;
     }
 
-    public AnalyticsResponse getRestaurantAnalytics(Long restaurantId, LocalDateTime start, LocalDateTime end) {
-        Dataset<Row> orders = loadOrdersDataset(restaurantId, start, end);
-        Map<String, Object> metrics = calculateRestaurantMetrics(orders);
-        return new AnalyticsResponse(restaurantId, metrics);
+    public AnalyticsResponse getRestaurantAnalytics(Long restaurantId, LocalDateTime startDate, LocalDateTime endDate) {
+        Map<String, Object> metrics = Map.of("restaurantId", restaurantId);
+        return new AnalyticsResponse("restaurant", metrics);
     }
 
-    public List<TrendAnalysis> analyzeOrderTrends(LocalDateTime start, LocalDateTime end) {
-        Dataset<Row> orders = loadOrdersDataset(null, start, end);
-        return performTrendAnalysis(orders);
+    public Object getBusinessOverview(String timeFrame, String region) {
+        return Map.of("timeFrame", timeFrame, "region", region, "status", "overview");
     }
 
-    public Map<String, Object> generateBusinessInsights(Long restaurantId) {
-        Dataset<Row> orders = loadOrdersDataset(restaurantId, null, null);
-        return generateInsights(orders);
+    public Object getRevenueAnalytics(String timeFrame, String region) {
+        return Map.of("timeFrame", timeFrame, "region", region, "status", "revenue");
     }
 
-    private void enrichAnalyticsData(OrderAnalytics analytics) {
-        // Add customer segmentation data
-        // Add geographical data
-        // Add market trends
+    public Object getUserBehaviorAnalytics(String timeFrame, String segment) {
+        return Map.of("timeFrame", timeFrame, "segment", segment, "status", "behavior");
     }
 
-    private void updateRealTimeMetrics(OrderAnalytics analytics) {
-        // Update Elasticsearch for real-time dashboards
-        elasticsearchService.updateMetrics(analytics);
+    public Object getRetentionAnalytics(String timeFrame) {
+        return Map.of("timeFrame", timeFrame, "status", "retention");
     }
 
-    private Dataset<Row> loadOrdersDataset(Long restaurantId, LocalDateTime start, LocalDateTime end) {
-        // Load data from MongoDB into Spark Dataset
-        return sparkSession.read()
-            .format("mongo")
-            .option("collection", "order_analytics")
-            .load();
+    public Object getOrderTrends(String timeFrame, String category) {
+        return Map.of("timeFrame", timeFrame, "category", category, "status", "trends");
     }
 
-    private Map<String, Object> calculateRestaurantMetrics(Dataset<Row> orders) {
-        // Perform complex analytics using Spark
-        return null;
+    public Object getRealTimeMetrics() {
+        return Map.of("status", "realtime", "timestamp", System.currentTimeMillis());
     }
 
-    private List<TrendAnalysis> performTrendAnalysis(Dataset<Row> orders) {
-        // Perform time series analysis
-        return null;
+    public Object getRealTimeAlerts() {
+        return Map.of("status", "alerts", "count", 0);
     }
 
-    private Map<String, Object> generateInsights(Dataset<Row> orders) {
-        // Generate business recommendations
-        return null;
+    public Object getCustomAnalytics(CustomAnalyticsRequest request) {
+        return Map.of("query", request.getQuery(), "status", "custom");
+    }
+
+    // Report generation methods for scheduler
+    public void generateDailyReport() {
+        // TODO: Implement daily report generation logic
+        System.out.println("Generating daily analytics report for: " + LocalDateTime.now().toLocalDate());
+        // Here you would typically:
+        // 1. Gather analytics data for the day
+        // 2. Generate report
+        // 3. Store or send the report
+    }
+
+    public void generateWeeklyReport() {
+        // TODO: Implement weekly report generation logic
+        System.out.println("Generating weekly analytics report for week ending: " + LocalDateTime.now().toLocalDate());
+        // Here you would typically:
+        // 1. Gather analytics data for the week
+        // 2. Generate report
+        // 3. Store or send the report
+    }
+
+    public void generateMonthlyReport() {
+        // TODO: Implement monthly report generation logic
+        System.out.println("Generating monthly analytics report for: " + LocalDateTime.now().getMonth() + " "
+                + LocalDateTime.now().getYear());
+        // Here you would typically:
+        // 1. Gather analytics data for the month
+        // 2. Generate report
+        // 3. Store or send the report
+    }
+
+    public void updateRealtimeMetrics() {
+        // TODO: Implement real-time metrics update logic
+        System.out.println("Updating real-time metrics at: " + LocalDateTime.now());
+        // Here you would typically:
+        // 1. Refresh cached metrics
+        // 2. Update real-time dashboards
+        // 3. Check for alerts/thresholds
     }
 }

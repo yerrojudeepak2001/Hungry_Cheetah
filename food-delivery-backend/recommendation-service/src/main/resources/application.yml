@@ -5,10 +5,10 @@ spring:
   application:
     name: recommendation-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/foodapp_recommendations
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:mysql://100.122.144.43:3306/food_app
+    username: teamuser
+    password: password123
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -44,18 +44,6 @@ feign:
         connectTimeout: 5000
         readTimeout: 5000
         loggerLevel: full
-  circuitbreaker:
-    enabled: true
-
-resilience4j:
-  circuitbreaker:
-    instances:
-      userService:
-        minimumNumberOfCalls: 5
-        failureRateThreshold: 50
-      orderService:
-        minimumNumberOfCalls: 5
-        failureRateThreshold: 50
   bulkhead:
     instances:
       recommendationGeneration:

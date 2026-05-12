@@ -1,11 +1,12 @@
 package com.foodapp.delivery.model;
 
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+
 
 @Data
 @Entity
@@ -43,4 +44,13 @@ public class DeliveryPartner {
     private Integer maxSimultaneousDeliveries;
     private Double averageDeliveryTime;
     private Double successRate;
+    
+    // Helper methods for Google Maps integration
+    public Double getCurrentLatitude() {
+        return currentLocation != null ? currentLocation.getLatitude() : null;
+    }
+    
+    public Double getCurrentLongitude() {
+        return currentLocation != null ? currentLocation.getLongitude() : null;
+    }
 }

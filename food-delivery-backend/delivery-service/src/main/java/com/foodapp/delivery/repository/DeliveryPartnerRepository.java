@@ -8,6 +8,7 @@ import java.util.List;
 @Repository
 public interface DeliveryPartnerRepository extends JpaRepository<DeliveryPartner, Long> {
     List<DeliveryPartner> findByIsAvailableAndIsOnline(Boolean isAvailable, Boolean isOnline);
+    List<DeliveryPartner> findByIsAvailableTrue();
     List<DeliveryPartner> findByServiceAreasContaining(String area);
     List<DeliveryPartner> findByPreferredZone(String zone);
     List<DeliveryPartner> findByActiveDeliveriesLessThan(Integer maxDeliveries);

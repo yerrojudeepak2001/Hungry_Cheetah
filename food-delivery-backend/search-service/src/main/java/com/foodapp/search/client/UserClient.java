@@ -3,6 +3,8 @@ package com.foodapp.search.client;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import com.foodapp.search.dto.UserPreferences;
+import com.foodapp.search.client.fallback.UserClientFallback;
+import java.util.List;
 
 @FeignClient(name = "USER-SERVICE", fallback = UserClientFallback.class)
 public interface UserClient {
